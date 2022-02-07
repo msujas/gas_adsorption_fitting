@@ -46,8 +46,8 @@ class Adsorption_profile:
         self.T,self.ads1,self.ads2 = np.loadtxt(file,unpack = True, skiprows = skiprows,
         delimiter = delimiter,usecols=usecols)
         self.maxads = max([max(self.ads1),max(self.ads2)])*1.1
-        self.fit1 = np.zeros(len(T))
-        self.fit2 = np.zeros(len(T))
+        self.fit1 = np.zeros(len(self.T))
+        self.fit2 = np.zeros(len(self.T))
         self.update_values()
 
     def twosite_nonequiv(self,Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi):
@@ -106,17 +106,29 @@ class Adsorption_profile:
         self.Jab = yopt['x'][4]
         self.minads = yopt['x'][5]
         self.maxads = yopt['x'][6]
-        #print('residuals =',np.sum(yopt['fun']))
+
         self.update_values()
-        print('dHa =',       self.Ha)
-        print('dHb =',       self.Hb)
-        print('dSa =',       self.Sa)
-        print('dSb =',       self.Sb)
-        print('Jab =',       self.Jab)
-        print('min. ads. =', self.minads)
-        print('max. ads. =', self.maxads)
+        rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2))**2
+        string = f'''dHa = {self.Ha}
+dHb = {self.Hb}
+dSa = {self.Sa}
+dSb = {self.Sb}
+Jab = {self.Jab}
+min. ads. = {self.minads}
+max. ads. = {self.maxads}
+rw = {rw}
+'''
+        print(string)
+
+        f = open('fitted_parameters.txt','w')
+        f.write(string)
+        f.close()
+
         self.fit1, self.fit2 = self.twosite_nonequiv(*self.values)
-        print('residual =',np.sum(yopt['fun']))
+
+
+
+
         return yopt
 
     def twosite_nonequiv_intra_optimise_proportion_bounds(self,x=np.array([None])):
@@ -156,15 +168,22 @@ class Adsorption_profile:
         self.maxads = yopt['x'][6]
         self.update_values()
 
-        print('dHa =',       self.Ha)
-        print('dHb =',       self.Hb)
-        print('dSa =',       self.Sa)
-        print('dSb =',       self.Sb)
-        print('Jab =',       self.Jab)
-        print('min. ads. =', self.minads)
-        print('max. ads. =', self.maxads)
+        rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2))**2
+        string = f'''dHa = {self.Ha}
+dHb = {self.Hb}
+dSa = {self.Sa}
+dSb = {self.Sb}
+Jab = {self.Jab}
+min. ads. = {self.minads}
+max. ads. = {self.maxads}
+rw = {rw}
+'''
+        print(string)
+        f = open('fitted_parameters.txt','w')
+        f.write(string)
+        f.close()
         self.fit1, self.fit2 = self.twosite_nonequiv(*self.values)
-        print('residual =',np.sum(yopt['fun']))
+
         return yopt
     def adsorption_plot(self):
         adsav = (self.ads1 + self.ads2)/2
