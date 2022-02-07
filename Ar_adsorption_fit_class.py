@@ -33,15 +33,21 @@ class Adsorption_profile:
         self.maxads = 1
         self.values = np.array([self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.minads,self.maxads])
         self.value_proportion = np.array([self.Ha,1,self.Sa,1,self.Jab,self.minads,self.maxads])
-
         self.fit1 = np.array([])
         self.fit2 = np.array([])
     def update_values(self):
         self.values = np.array([self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.minads,self.maxads])
         self.value_proportion = np.array([self.Ha,self.Hb/self.Ha,self.Sa,self.Sb/self.Sa,self.Jab,self.minads,self.maxads])
-    def read_file(self,file):
-        self.T,self.ads1,self.ads2 = np.loadtxt(file,unpack = True, skiprows = 1)
+    def read_file(self,file,delimiter=None,skiprows = 0,usecols = None):
+        '''
+        uses numpy.loadtxt. Positional arguements: file. Keyword arguements:
+        delimiter=None, skiprows=0, usecols=None.
+        '''
+        self.T,self.ads1,self.ads2 = np.loadtxt(file,unpack = True, skiprows = skiprows,
+        delimiter = delimiter,usecols=usecols)
         self.maxads = max([max(self.ads1),max(self.ads2)])*1.1
+        self.fit1 = np.zeros(len(T))
+        self.fit2 = np.zeros(len(T))
         self.update_values()
 
     def twosite_nonequiv(self,Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi):
@@ -181,7 +187,7 @@ bounds = (np.array([-50000,-50000,-1000,-1000,-100,-1,14]),
 
 Ar_ads_data = Adsorption_profile()
 
-Ar_ads_data.read_file('Ar_occupancy_1bar.txt')
+Ar_ads_data.read_file('Ar_occupancy_1bar.txt',skiprows = 1)
 print(Ar_ads_data.values)
 yopt = Ar_ads_data.run_optimise(bounds = bounds)
 
