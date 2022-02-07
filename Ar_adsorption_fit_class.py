@@ -38,13 +38,12 @@ class Adsorption_profile:
         self.fit2 = np.array([])
     def update_values(self):
         self.values = np.array([self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.minads,self.maxads])
-    def update_proportion_values(self):
         self.value_proportion = np.array([self.Ha,self.Hb/self.Ha,self.Sa,self.Sb/self.Sa,self.Jab,self.minads,self.maxads])
     def read_file(self,file):
         self.T,self.ads1,self.ads2 = np.loadtxt(file,unpack = True, skiprows = 1)
         self.maxads = max([max(self.ads1),max(self.ads2)])*1.1
         self.update_values()
-        self.update_proportion_values()
+
     def twosite_nonequiv(self,Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi):
         R = 8.314
         dA = -1*(Hai-self.T*Sai)
@@ -150,7 +149,7 @@ class Adsorption_profile:
         self.minads = yopt['x'][5]
         self.maxads = yopt['x'][6]
         self.update_values()
-        self.update_proportion_values()
+
         print('dHa =',       self.Ha)
         print('dHb =',       self.Hb)
         print('dSa =',       self.Sa)
