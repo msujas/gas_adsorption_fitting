@@ -19,6 +19,7 @@ class One_site_adsorption_profile:
         self.minmax_refine = False
     def update_values(self):
         self.values = np.array([self.H,self.Sa,self.J,self.minads,self.maxads])
+        self.gamma = (self.ads - self.minads)/(self.maxads-self.minads)
     def read_file(self,file,delimiter=None,skiprows = 0,usecols = None):
         '''
         uses numpy.loadtxt. Positional arguments: file. Keyword arguments:
@@ -28,6 +29,9 @@ class One_site_adsorption_profile:
         delimiter = delimiter,usecols=usecols)
         self.maxads = max(self.ads)*1.1
         self.fit = self.one_site_simple(self.H,self.S,self.minads,self.maxads)
+        self.gamma = (self.ads - self.minads)/(self.maxads-self.minads)
+        self.Keq = self.gamma/(1-self.gamma)
+        self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
         self.update_values()
     def one_site_simple(self,Hi,Si,minadsi,maxadsi):
         deltaG = Hi - self.T*Si
@@ -66,10 +70,11 @@ class One_site_adsorption_profile:
         f = open('fitted_parameters.txt','w')
         f.write(string)
         f.close()
-        gamma = (self.ads - self.minads)/(self.maxads-self.minads)
-        self.Keq = gamma/(1-gamma)
-        self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
+
         self.update_values()
+        self.Keq = self.gamma/(1-self.gamma)
+        self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
+
         self.fit = self.one_site_simple(self.H,self.S,self.minads,self.maxads)
         return yopt
     def adsorption_plot(self):
