@@ -5,8 +5,92 @@ import matplotlib.pyplot as plt
 file = 'Ar_occupancy_1bar.txt'
 
 
+class One_site_adsorption_profile:
+    def __init__(self):
+        self.T = np.array([])
+        self.ads = np.array([])
+        self.H = -5000
+        self.S = -50
+        self.J = 0
+        self.minads = 0
+        self.maxads = 1
+        self.values = np.array([self.H,self.S,,self.J,self.minads,self.maxads])
+        self.fit = np.array([])
+        self.minmax_refine = False
+    def update_values(self):
+        self.values = np.array([self.H,self.Sa,self.J,self.minads,self.maxads])
+    def read_file(self,file,delimiter=None,skiprows = 0,usecols = None):
+        '''
+        uses numpy.loadtxt. Positional arguments: file. Keyword arguments:
+        delimiter=None, skiprows=0, usecols=None.
+        '''
+        self.T,self.ads = np.loadtxt(file,unpack = True, skiprows = skiprows,
+        delimiter = delimiter,usecols=usecols)
+        self.maxads = max(self.ads)*1.1
+        self.fit = self.one_site_simple(self.H,self.S,self.minads,self.maxads)
+        self.update_values()
+    def one_site_simple(self,Hi,Si,minadsi,maxadsi):
+        deltaG = Hi - self.T*Si
+        R = 8.31446
+        gamma = np.exp(-deltaG/(R*self.T))/(1+np.exp(-deltaG/(R*self.T)))
+        adsorption = gamma*(maxadsi-minadsi) + minadsi
+        return adsorption
+    def one_site_simple_optimise(self,x=np.array([None])):
+        if x.any() == None:
+            x = [self.H,self.S,self.minads,self.maxads]
+        if len(x) == 4:
+            adsfit = self.one_site_simple(*x)
+        elif len(x) == 2:
+            adsfit = self.one_site_simple(x[0],x[1],self.minads,self.maxads)
+        return self.ads - adsfit
+    def run_optimise(self,x = np.array([None]),bounds = ([np.inf]*4,[np.inf]*4,minmaxfix = False):
+        if x.any() == None and minmaxfix == False:
+            x = np.array([self.H,self.S,self.minads,self.maxads])
+        elif x.any() == None and minmaxfix = True:
+            x = np.array([self.H,self.X])
+            bounds = (bounds[0][:2],bounds[1][:2])
 
-class Adsorption_profile:
+        yopt = optimize.least_squares(self.one_site_simple_optimise,x,bounds=bounds)
+        self.H = yopt['x'][0]
+        self.S = yopt['x'][1]
+        #self.J = yopt['x'][2]
+        if minmaxfix == False:
+            self.minads = yopt['x'][2]
+            self.maxads = yopt['x'][3]
+        R = 8.31446
+        string = f'''dH = {self.H}
+        dS = {self.S}
+        min. ads. = {self.minads}
+        max. ads = {self.maxads}
+        '''
+        f = open('fitted_parameters.txt','w')
+        f.write(string)
+        f.close()
+        gamma = (self.ads - self.minads)/(self.maxads-self.minads)
+        self.Keq = gamma/(1-gamma)
+        self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
+        self.update_values()
+        self.fit = self.one_site_simple(self.H,self.S,self.minads,self.maxads)
+        return yopt
+    def adsorption_plot(self):
+        plt.plot(self.T,self.ads,'o',label = 'adsorption')
+        plt.plot(self.T,self.fit, label = 'fit')
+        plt.xlim(self.T[0],self.T[-1])
+        plt.xlabel('Temperature (K)')
+        plt.ylabel('Adsorption')
+        plt.legend()
+        plt.show()
+    def vant_hoff_plot(self):
+        plt.plot(np.log(self.Keq),1/self.T,'o',label = 'measured (min. max. normalised)')
+        plt.plot(np.log(self.Keq_fit),1/self.T,label = 'fit')
+        plt.xlim(min(1/self.T),max(1/self.T))
+        plt.xlabel('1/T (K$^{-1}$)')
+        plt.ylabel('ln(K)')
+        plt.legend()
+        plt.show()
+
+
+class Two_site_adsorption_profile:
     '''
     Attributes: temperature (T), adsorption 1 (ads1), adsorption 2 (ads2),
     dH1 (Ha), dH2 (Hb), dS1 (Sa), dS2 (Sb), Jab, minimum adsorption (minads),
@@ -31,10 +115,13 @@ class Adsorption_profile:
         self.Jab = 0
         self.minads = 0
         self.maxads = 1
+        self.minads2 = 0
+        self.maxads2 = 1
         self.values = np.array([self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.minads,self.maxads])
         self.value_proportion = np.array([self.Ha,1,self.Sa,1,self.Jab,self.minads,self.maxads])
         self.fit1 = np.array([])
         self.fit2 = np.array([])
+
     def update_values(self):
         self.values = np.array([self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.minads,self.maxads])
         self.value_proportion = np.array([self.Ha,self.Hb/self.Ha,self.Sa,self.Sb/self.Sa,self.Jab,self.minads,self.maxads])
@@ -51,7 +138,7 @@ class Adsorption_profile:
         self.update_values()
 
     def twosite_nonequiv(self,Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi):
-        R = 8.314
+        R = 8.31446
         dA = -1*(Hai-self.T*Sai)
         dB = -1*(Hbi-self.T*Sbi)
         S = dA + dB
@@ -97,7 +184,7 @@ class Adsorption_profile:
         return yresid
 
     def twosite_nonequiv_minmax2(self,Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi,minadsi2,maxadsi2):
-        R = 8.314
+        R = 8.31446
         dA = -1*(Hai-self.T*Sai)
         dB = -1*(Hbi-self.T*Sbi)
         S = dA + dB
@@ -151,6 +238,9 @@ class Adsorption_profile:
         elif len(initial) == 9:
             yopt = optimize.least_squares(self.twosite_nonequiv_minmax2_optimise,initial,
                        bounds = bounds)
+            self.minads2 = yopt['x'][7]
+            self.maxads2 = yopt['x'][8]
+
         self.Ha = yopt['x'][0]
         self.Hb = yopt['x'][1]
         self.Sa = yopt['x'][2]
@@ -158,11 +248,9 @@ class Adsorption_profile:
         self.Jab = yopt['x'][4]
         self.minads = yopt['x'][5]
         self.maxads = yopt['x'][6]
-        if len(initial) == 9:
-            self.minads2 = yopt['x'][7]
-            self.maxads2 = yopt['x'][8]
 
         self.update_values()
+
         rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2))**2
         string = f'''dHa = {self.Ha}
 dHb = {self.Hb}
@@ -173,21 +261,22 @@ min. ads. = {self.minads}
 max. ads. = {self.maxads}
 rw = {rw}
 '''
-        if len(initial) == 9:
-            string += f'min. ads. 2 = {self.minads2}\nmax. ads. 2 = {self.maxads2}'
 
-        print(string)
 
-        f = open('fitted_parameters.txt','w')
-        f.write(string)
-        f.close()
-        if len(initial == 7):
+
+
+        if len(initial) == 7:
             self.fit1, self.fit2 = self.twosite_nonequiv(*self.values)
-        if len(initial == 9):
+        elif len(initial) == 9:
             self.values = np.append(self.values,self.minads2)
             self.values = np.append(self.values,self.maxads2)
             self.fit1, self.fit2 = self.twosite_nonequiv_minmax2(*self.values)
+            string += f'min. ads. 2 = {self.minads2}\nmax. ads. 2 = {self.maxads2}'
 
+        print(string)
+        f = open('fitted_parameters.txt','w')
+        f.write(string)
+        f.close()
         np.savetxt('adsorption_fit.txt',np.array([self.T,self.ads1,self.fit1,self.ads2,self.fit2]).transpose(),
         header = 'T(K) adsorption1 fit1 adsorption2 fit2')
 
@@ -219,8 +308,10 @@ rw = {rw}
     def run_optimise_proportion(self,initial=np.array([None]),bounds=([-1*np.inf]*7,[np.inf]*7)):
         if initial.any() == None:
             initial = self.value_proportion
+
         yopt = optimize.least_squares(self.twosite_nonequiv_intra_optimise_proportion_bounds,
                                         initial, bounds = bounds)
+
         print(yopt)
         self.Ha = yopt['x'][0]
         self.Hb = yopt['x'][1]
@@ -276,11 +367,11 @@ bounds = (np.array([-50000,-50000,-1000,-1000,-100,-1,14]),
           np.array([0,0,1000,1000,20000,0,20]))
 bounds2 = (np.array([-50000,-50000,-1000,-1000,-100,-1,14,-1,14]),
           np.array([0,0,1000,1000,20000,0,30,0,17]))
-Ar_ads_data = Adsorption_profile()
+Ar_ads_data = Two_site_adsorption_profile()
 
 Ar_ads_data.read_file('Ar_occupancy_1bar.txt',skiprows = 1)
 #print(Ar_ads_data.values)
-yopt = Ar_ads_data.run_optimise(initial = initial2,bounds = bounds2)
+yopt = Ar_ads_data.run_optimise(bounds = bounds)
 
 #print(Ar_ads_data.values)
 
