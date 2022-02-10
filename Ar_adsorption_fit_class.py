@@ -28,11 +28,13 @@ class One_site_adsorption_profile:
         self.T,self.ads = np.loadtxt(file,unpack = True, skiprows = skiprows,
         delimiter = delimiter,usecols=usecols)
         self.maxads = max(self.ads)*1.1
+
+
+        self.update_values()
         self.fit = self.one_site_simple(self.H,self.S,self.minads,self.maxads)
         self.gamma = (self.ads - self.minads)/(self.maxads-self.minads)
         self.Keq = self.gamma/(1-self.gamma)
         self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
-        self.update_values()
     def one_site_simple(self,Hi,Si,minadsi,maxadsi):
         deltaG = Hi - self.T*Si
         R = 8.31446
@@ -138,10 +140,8 @@ class Two_site_adsorption_profile:
         self.T,self.ads1,self.ads2 = np.loadtxt(file,unpack = True, skiprows = skiprows,
         delimiter = delimiter,usecols=usecols)
         self.maxads = max([max(self.ads1),max(self.ads2)])*1.1
-        self.fit1 = np.zeros(len(self.T))
-        self.fit2 = np.zeros(len(self.T))
         self.update_values()
-
+        self.fit1,self.fit2 = self.twosite_nonequiv(*self.values)
     def twosite_nonequiv(self,Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi):
         R = 8.31446
         dA = -1*(Hai-self.T*Sai)
@@ -365,19 +365,3 @@ rw = {rw}
         plt.xlim(min(self.T),max(self.T))
         plt.legend()
         plt.show()
-
-
-initial2 = np.array([-5000,-5000,-50,-50,0,0,15,0,15])
-bounds = (np.array([-50000,-50000,-1000,-1000,-100,-1,14]),
-          np.array([0,0,1000,1000,20000,0,20]))
-bounds2 = (np.array([-50000,-50000,-1000,-1000,-100,-1,14,-1,14]),
-          np.array([0,0,1000,1000,20000,0,30,0,17]))
-Ar_ads_data = Two_site_adsorption_profile()
-
-Ar_ads_data.read_file('Ar_occupancy_1bar.txt',skiprows = 1)
-#print(Ar_ads_data.values)
-yopt = Ar_ads_data.run_optimise(bounds = bounds)
-
-#print(Ar_ads_data.values)
-
-Ar_ads_data.adsorption_plot()
