@@ -9,24 +9,17 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import adsorptionFitClass
-import numpy as np
+
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
-        MainWindow.setObjectName("Adsorption profile fit")
+        MainWindow.setObjectName("MainWindow")
         MainWindow.resize(800, 585)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.inputfileLabel = QtWidgets.QLabel(self.centralwidget)
         self.inputfileLabel.setGeometry(QtCore.QRect(500, 30, 61, 21))
         self.inputfileLabel.setObjectName("inputfileLabel")
-        self.outputLabel = QtWidgets.QLabel(self.centralwidget)
-        self.outputLabel.setGeometry(QtCore.QRect(50, 350, 121, 181))
-        self.outputLabel.setObjectName("outputLabel")
-        font = QtGui.QFont()
-        font.setPointSize(14)
-        self.outputLabel.setFont(font)
         self.InputFile = QtWidgets.QTextEdit(self.centralwidget)
         self.InputFile.setGeometry(QtCore.QRect(20, 30, 471, 21))
         self.InputFile.setObjectName("InputFile")
@@ -40,50 +33,52 @@ class Ui_MainWindow(object):
         self.InputTypeLabel.setGeometry(QtCore.QRect(230, 100, 101, 31))
         self.InputTypeLabel.setObjectName("InputTypeLabel")
         self.MinMaxRefine = QtWidgets.QComboBox(self.centralwidget)
-        self.MinMaxRefine.setGeometry(QtCore.QRect(50, 180, 161, 22))
+        self.MinMaxRefine.setGeometry(QtCore.QRect(50, 200, 161, 22))
         self.MinMaxRefine.setObjectName("MinMaxRefine")
         self.MinMaxRefine.addItem("")
         self.MinMaxRefine.addItem("")
         self.MinMaxLabel = QtWidgets.QLabel(self.centralwidget)
-        self.MinMaxLabel.setGeometry(QtCore.QRect(220, 180, 151, 21))
+        self.MinMaxLabel.setGeometry(QtCore.QRect(220, 200, 151, 21))
         self.MinMaxLabel.setScaledContents(False)
         self.MinMaxLabel.setObjectName("MinMaxLabel")
         self.ModelType = QtWidgets.QComboBox(self.centralwidget)
-        self.ModelType.setGeometry(QtCore.QRect(25, 250, 190, 22))
+        self.ModelType.setGeometry(QtCore.QRect(50, 290, 161, 22))
         self.ModelType.setObjectName("ModelType")
         self.ModelType.addItem("")
         self.ModelType.addItem("")
         self.ModelType.addItem("")
-        font = QtGui.QFont()
-        font.setPointSize(12)
         self.ModelTypeLabel = QtWidgets.QLabel(self.centralwidget)
-        self.ModelTypeLabel.setGeometry(QtCore.QRect(220, 210, 200, 100))
+        self.ModelTypeLabel.setGeometry(QtCore.QRect(220, 290, 111, 21))
         self.ModelTypeLabel.setObjectName("ModelTypeLabel")
-        self.ModelTypeLabel.setFont(font)
         self.optimiseButton = QtWidgets.QPushButton(self.centralwidget)
         self.optimiseButton.setGeometry(QtCore.QRect(590, 490, 91, 23))
         self.optimiseButton.setObjectName("optimiseButton")
-
+        self.outputlabel = QtWidgets.QLabel(self.centralwidget)
+        self.outputlabel.setGeometry(QtCore.QRect(40, 380, 121, 181))
+        font = QtGui.QFont()
+        font.setPointSize(16)
+        self.outputlabel.setFont(font)
+        self.outputlabel.setObjectName("outputlabel")
         self.deltaHainit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.deltaHainit.setGeometry(QtCore.QRect(440, 100, 60, 31))
+        self.deltaHainit.setGeometry(QtCore.QRect(440, 100, 51, 31))
         self.deltaHainit.setObjectName("deltaHainit")
         self.deltaSaInit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.deltaSaInit.setGeometry(QtCore.QRect(440, 140, 60, 31))
+        self.deltaSaInit.setGeometry(QtCore.QRect(440, 140, 51, 31))
         self.deltaSaInit.setObjectName("deltaSaInit")
         self.deltaHbinit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.deltaHbinit.setGeometry(QtCore.QRect(440, 180, 60, 31))
+        self.deltaHbinit.setGeometry(QtCore.QRect(440, 180, 51, 31))
         self.deltaHbinit.setObjectName("deltaHbinit")
         self.deltaSbInit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.deltaSbInit.setGeometry(QtCore.QRect(440, 220, 60, 31))
+        self.deltaSbInit.setGeometry(QtCore.QRect(440, 220, 51, 31))
         self.deltaSbInit.setObjectName("deltaSbInit")
         self.Jinit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.Jinit.setGeometry(QtCore.QRect(440, 260, 60, 31))
+        self.Jinit.setGeometry(QtCore.QRect(440, 260, 51, 31))
         self.Jinit.setObjectName("Jinit")
         self.minadsinit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.minadsinit.setGeometry(QtCore.QRect(440, 300, 60, 31))
+        self.minadsinit.setGeometry(QtCore.QRect(440, 300, 51, 31))
         self.minadsinit.setObjectName("minadsinit")
         self.maxadsinit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.maxadsinit.setGeometry(QtCore.QRect(440, 340, 60, 31))
+        self.maxadsinit.setGeometry(QtCore.QRect(440, 340, 51, 31))
         self.maxadsinit.setObjectName("maxadsinit")
         self.deltaHalabel = QtWidgets.QLabel(self.centralwidget)
         self.deltaHalabel.setGeometry(QtCore.QRect(380, 110, 47, 13))
@@ -112,7 +107,6 @@ class Ui_MainWindow(object):
         self.maxadslabel = QtWidgets.QLabel(self.centralwidget)
         self.maxadslabel.setGeometry(QtCore.QRect(380, 350, 47, 13))
         self.maxadslabel.setObjectName("maxadslabel")
-
         self.updateInitialValuesButton = QtWidgets.QPushButton(self.centralwidget)
         self.updateInitialValuesButton.setGeometry(QtCore.QRect(430, 490, 111, 23))
         self.updateInitialValuesButton.setObjectName("updateInitialValuesButton")
@@ -137,12 +131,12 @@ class Ui_MainWindow(object):
         self.JLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.JLowbound.setGeometry(QtCore.QRect(530, 260, 51, 31))
         self.JLowbound.setObjectName("JLowbound")
-        self.boundsLabel = QtWidgets.QLabel(self.centralwidget)
-        self.boundsLabel.setGeometry(QtCore.QRect(550, 70, 121, 16))
+        self.initialvalueslabel_2 = QtWidgets.QLabel(self.centralwidget)
+        self.initialvalueslabel_2.setGeometry(QtCore.QRect(550, 70, 121, 16))
         font = QtGui.QFont()
         font.setPointSize(14)
-        self.boundsLabel.setFont(font)
-        self.boundsLabel.setObjectName("boundsLabel")
+        self.initialvalueslabel_2.setFont(font)
+        self.initialvalueslabel_2.setObjectName("initialvalueslabel_2")
         self.deltaSbHighBound = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.deltaSbHighBound.setGeometry(QtCore.QRect(590, 220, 51, 31))
         self.deltaSbHighBound.setObjectName("deltaSbHighBound")
@@ -164,19 +158,17 @@ class Ui_MainWindow(object):
         self.maxadsHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.maxadsHighbound.setGeometry(QtCore.QRect(590, 340, 51, 31))
         self.maxadsHighbound.setObjectName("maxadsHighbound")
-
         self.tempUnit = QtWidgets.QComboBox(self.centralwidget)
-        self.tempUnit.setGeometry(QtCore.QRect(50, 310, 69, 22))
+        self.tempUnit.setGeometry(QtCore.QRect(50, 340, 69, 22))
         self.tempUnit.setObjectName("tempUnit")
         self.tempUnit.addItem("")
         self.tempUnit.addItem("")
         self.tempUnitLabel = QtWidgets.QLabel(self.centralwidget)
-        self.tempUnitLabel.setGeometry(QtCore.QRect(140, 310, 141, 21))
+        self.tempUnitLabel.setGeometry(QtCore.QRect(140, 340, 141, 21))
         font = QtGui.QFont()
         font.setPointSize(12)
         self.tempUnitLabel.setFont(font)
         self.tempUnitLabel.setObjectName("tempUnitLabel")
-
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
@@ -196,66 +188,39 @@ class Ui_MainWindow(object):
         self.InputType.setCurrentIndex(1)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
-
-        self.optimiseButton.clicked.connect(self.click_optimise)
-        self.updateInitialValuesButton.clicked.connect(self.click_update)
-        self.actionopen.triggered.connect(self.open_file)
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
-        MainWindow.setWindowTitle(_translate("MainWindow", "Adsorption profile fit"))
+        MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
         self.inputfileLabel.setText(_translate("MainWindow", "Input File"))
         self.InputFile.setHtml(_translate("MainWindow", "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n"
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
 "<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">C:\\Users\\kenneth1a\\Documents\\beamline data\\Yaroslav_Iurii_data\\Ar_occupancy_1bar.txt</p></body></html>"))
-
-        output_string = ("deltaH = \n"
-        "deltaS = \n"
-        "J = \n"
-        "min. ads. = \n"
-        "max. ads. = ")
-
-        self.outputLabel.setText(_translate("MainWindow", output_string))
-
-        self.InputType.setCurrentText(_translate("MainWindow", "Single site"))
+        self.InputType.setCurrentText(_translate("MainWindow", "Two sites"))
         self.InputType.setItemText(0, _translate("MainWindow", "Single site"))
         self.InputType.setItemText(1, _translate("MainWindow", "Two sites"))
         self.InputTypeLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt;\">input type</span></p></body></html>"))
         self.MinMaxRefine.setItemText(0, _translate("MainWindow", "Off"))
         self.MinMaxRefine.setItemText(1, _translate("MainWindow", "On"))
         self.MinMaxLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt;\">min. max. refine</span></p></body></html>"))
-
         self.ModelType.setItemText(0, _translate("MainWindow", "Simple single site"))
         self.ModelType.setItemText(1, _translate("MainWindow", "Single site cooperative"))
-
-        self.tempUnit.setItemText(0, _translate("MainWindow", "°C"))
-        self.tempUnit.setItemText(1, _translate("MainWindow", "K"))
-        self.tempUnit.setCurrentIndex(1)
-        self.tempUnitLabel.setText(_translate("MainWindow", "Temperature Unit"))
-
         self.ModelType.setItemText(2, _translate("MainWindow", "Two sites, intra-pore interaction"))
-        self.ModelTypeLabel.setText(_translate("MainWindow", "Model type\n(doesn't do anything\n right now)"))
+        self.ModelTypeLabel.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:14pt;\">Model type</span></p></body></html>"))
         self.optimiseButton.setText(_translate("MainWindow", "Run Fit"))
-        self.menufile.setTitle(_translate("MainWindow", "File"))
-        self.actionopen.setText(_translate("MainWindow", "Open"))
-        self.actionopen.setShortcut(_translate("MainWindow", "Ctrl+O"))
-
-        self.Hai = '-5000'
-        self.Hbi = '-5000'
-        self.Sai = '-50'
-        self.Sbi = '-50'
-        self.Ji = '0'
-        self.minadsi = '0'
-        self.maxadsi = '1'
-
-        self.deltaHainit.setPlainText(_translate("MainWindow", self.Hai))
-        self.deltaSaInit.setPlainText(_translate("MainWindow", self.Sai))
-        self.deltaHbinit.setPlainText(_translate("MainWindow", self.Hbi))
-        self.deltaSbInit.setPlainText(_translate("MainWindow", self.Sbi))
-        self.Jinit.setPlainText(_translate("MainWindow", self.Ji))
-        self.minadsinit.setPlainText(_translate("MainWindow", self.minadsi))
-        self.maxadsinit.setPlainText(_translate("MainWindow", self.maxadsi))
+        self.outputlabel.setText(_translate("MainWindow", "deltaH = \n"
+"deltaS = \n"
+" J= \n"
+"min. ads. = \n"
+"max. ads. = "))
+        self.deltaHainit.setPlainText(_translate("MainWindow", "-5000"))
+        self.deltaSaInit.setPlainText(_translate("MainWindow", "-50"))
+        self.deltaHbinit.setPlainText(_translate("MainWindow", "-5000"))
+        self.deltaSbInit.setPlainText(_translate("MainWindow", "-50"))
+        self.Jinit.setPlainText(_translate("MainWindow", "0"))
+        self.minadsinit.setPlainText(_translate("MainWindow", "0"))
+        self.maxadsinit.setPlainText(_translate("MainWindow", "1"))
         self.deltaHalabel.setText(_translate("MainWindow", "deltaHa"))
         self.initialvalueslabel.setText(_translate("MainWindow", "Initial Values"))
         self.deltaSalabel.setText(_translate("MainWindow", "deltaSa"))
@@ -264,7 +229,6 @@ class Ui_MainWindow(object):
         self.Jlabel.setText(_translate("MainWindow", "J"))
         self.minadslabel.setText(_translate("MainWindow", "min. ads."))
         self.maxadslabel.setText(_translate("MainWindow", "max. ads."))
-
         self.updateInitialValuesButton.setText(_translate("MainWindow", "Update initial values"))
         self.deltaHbLowbound.setPlainText(_translate("MainWindow", "-50000"))
         self.deltaHaLowbound.setPlainText(_translate("MainWindow", "-50000"))
@@ -273,7 +237,7 @@ class Ui_MainWindow(object):
         self.deltaSaLowbound.setPlainText(_translate("MainWindow", "-500"))
         self.minadsLowbound.setPlainText(_translate("MainWindow", "-1"))
         self.JLowbound.setPlainText(_translate("MainWindow", "-10000"))
-        self.boundsLabel.setText(_translate("MainWindow", "Bounds"))
+        self.initialvalueslabel_2.setText(_translate("MainWindow", "Bounds"))
         self.deltaSbHighBound.setPlainText(_translate("MainWindow", "100"))
         self.JHighbound.setPlainText(_translate("MainWindow", "10000"))
         self.minadsHighbound.setPlainText(_translate("MainWindow", "0"))
@@ -281,110 +245,14 @@ class Ui_MainWindow(object):
         self.deltaHbHighbound.setPlainText(_translate("MainWindow", "500"))
         self.deltaHaHighbound.setPlainText(_translate("MainWindow", "500"))
         self.maxadsHighbound.setPlainText(_translate("MainWindow", "20"))
+        self.tempUnit.setItemText(0, _translate("MainWindow", "°C"))
+        self.tempUnit.setItemText(1, _translate("MainWindow", "K"))
+        self.tempUnitLabel.setText(_translate("MainWindow", "Temperature Unit"))
+        self.menufile.setTitle(_translate("MainWindow", "File"))
+        self.actionopen.setText(_translate("MainWindow", "Open"))
+        self.actionopen.setShortcut(_translate("MainWindow", "Ctrl+O"))
 
 
-
-    def click_optimise(self):
-        Halow = float(self.deltaHaLowbound.toPlainText())
-        Hahigh = float(self.deltaHaHighbound.toPlainText())
-        Salow = float(self.deltaSaLowbound.toPlainText())
-        Sahigh = float(self.deltaSaHighbound.toPlainText())
-        Hblow = float(self.deltaHbLowbound.toPlainText())
-        Hbhigh = float(self.deltaHbHighbound.toPlainText())
-        Sblow = float(self.deltaSbLowbound.toPlainText())
-        Sbhigh = float(self.deltaSbHighBound.toPlainText())
-        Jlow = float(self.JLowbound.toPlainText())
-        Jhigh = float(self.JHighbound.toPlainText())
-        minadslow = float(self.minadsLowbound.toPlainText())
-        minadshigh = float(self.minadsHighbound.toPlainText())
-        maxadslow = float(self.maxadsLowbound.toPlainText())
-        maxadshigh = float(self.maxadsHighbound.toPlainText())
-
-        if self.tempUnit.currentText() == '°C':
-            temperatureunit = 'C'
-        elif self.tempUnit.currentText() == 'K':
-            temperatureunit = 'K'
-        if self.InputType.currentText() == 'Single site':
-            ads_profile = adsorptionFitClass.One_site_adsorption_profile()
-            ads_profile.read_file(file = self.InputFile.toPlainText(),unit = temperatureunit)
-            ads_profile.H = float(self.deltaHainit.toPlainText())
-            ads_profile.S = float(self.deltaSaInit.toPlainText())
-            ads_profile.J = float(self.Jinit.toPlainText())
-            ads_profile.minads = float(self.minadsinit.toPlainText())
-            ads_profile.maxads = float(self.maxadsinit.toPlainText())
-            if self.MinMaxRefine.currentText() == 'Off':
-                bounds = ([Halow,Salow],[Hahigh,Sahigh])
-                ads_profile.run_optimise(x = np.array([ads_profile.H, ads_profile.S]),bounds = bounds)
-            elif self.MinMaxRefine.currentText() == 'On':
-                bounds = ([Halow,Salow,minadslow,maxadslow],[Hahigh,Sahigh,minadshigh,maxadshigh])
-                ads_profile.run_optimise(x = np.array([ads_profile.H, ads_profile.S, ads_profile.minads, ads_profile.maxads]),
-                bounds = bounds)
-
-            ads_profile.ads_vant_hoff_plot()
-            output_string = (f"deltaH = {ads_profile.H: .1f}\n"
-            f"deltaS = {ads_profile.S :.2f}\n"
-            f"min. ads. = {ads_profile.minads :.3f}\n"
-            f"max. ads = {ads_profile.maxads :.3f}")
-            self.outputLabel.setText(output_string)
-            self.outputLabel.adjustSize()
-
-            self.Hai =     f"{ads_profile.H :.1f}"
-            self.Sai =     f"{ads_profile.S : .2f}"
-            self.minadsi = f"{ads_profile.minads :.3f}"
-            self.maxadsi = f"{ads_profile.maxads :.3f}"
-        elif self.InputType.currentText() == 'Two sites':
-            ads_profile = adsorptionFitClass.Two_site_adsorption_profile()
-            ads_profile.read_file(file = self.InputFile.toPlainText())
-            ads_profile.Ha = float(self.deltaHainit.toPlainText())
-            ads_profile.Sa = float(self.deltaSaInit.toPlainText())
-            ads_profile.Hb = float(self.deltaHbinit.toPlainText())
-            ads_profile.Sb = float(self.deltaSbInit.toPlainText())
-            ads_profile.Jab = float(self.Jinit.toPlainText())
-            ads_profile.minads = float(self.minadsinit.toPlainText())
-            ads_profile.maxads = float(self.maxadsinit.toPlainText())
-            if self.MinMaxRefine.currentText() == 'Off':
-                x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab])
-                bounds = ([Halow,Hblow,Salow,Sblow,Jlow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh])
-
-            elif self.MinMaxRefine.currentText() == 'On':
-                x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab,ads_profile.minads,ads_profile.maxads])
-                bounds = ([Halow,Hblow,Salow,Sblow,Jlow,minadslow,maxadslow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh,minadshigh,maxadshigh])
-            ads_profile.run_optimise(x = x,bounds = bounds)
-            ads_profile.adsorption_plot()
-
-            output_string = (f"deltaHa = {ads_profile.Ha: .1f}\n"
-            f"deltaSa = {ads_profile.Sa :.2f}\n"
-            f"deltaHb = {ads_profile.Hb :.1f}\n"
-            f"deltaSb = {ads_profile.Sb :.2f}\n"
-            f"Jab = {ads_profile.Jab :.1f}\n"
-            f"min. ads. = {ads_profile.minads :.3f}\n"
-            f"max. ads = {ads_profile.maxads :.3f}")
-            self.outputLabel.setText(output_string)
-            self.outputLabel.adjustSize()
-
-            self.Hai =     f"{ads_profile.Ha :.1f}"
-            self.Hbi =     f"{ads_profile.Hb : .1f}"
-            self.Sai =     f"{ads_profile.Sa : .2f}"
-            self.Sbi =     f"{ads_profile.Sb : .2f}"
-            self.Ji =      f"{ads_profile.Jab :.1f}"
-            self.minadsi = f"{ads_profile.minads :.3f}"
-            self.maxadsi = f"{ads_profile.maxads :.3f}"
-    def click_update(self):
-        self.deltaHainit.setPlainText(self.Hai)
-        self.deltaSaInit.setPlainText(self.Sai)
-        self.deltaHbinit.setPlainText(self.Hbi)
-        self.deltaSbInit.setPlainText(self.Sbi)
-        self.Jinit.setPlainText(self.Ji)
-        self.minadsinit.setPlainText(self.minadsi)
-        self.maxadsinit.setPlainText(self.maxadsi)
-    def open_file(self):
-
-        #dialog.setFileMode(QtWidgets.QFileDialog.AnyFile)
-        filter = "data file (*.txt *.dat *.xy *.xye *csv)"
-        dialog = QtWidgets.QFileDialog.getOpenFileName(caption = 'select data file',
-        filter = filter)
-
-        self.InputFile.setText(dialog[0])
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>380</height>
+    <height>585</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -126,7 +126,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>50</x>
-      <y>280</y>
+      <y>290</y>
       <width>161</width>
       <height>22</height>
      </rect>
@@ -151,7 +151,7 @@ p, li { white-space: pre-wrap; }
     <property name="geometry">
      <rect>
       <x>220</x>
-      <y>280</y>
+      <y>290</y>
       <width>111</width>
       <height>21</height>
      </rect>
@@ -163,14 +163,487 @@ p, li { white-space: pre-wrap; }
    <widget class="QPushButton" name="optimiseButton">
     <property name="geometry">
      <rect>
-      <x>430</x>
-      <y>290</y>
+      <x>590</x>
+      <y>490</y>
       <width>91</width>
       <height>23</height>
      </rect>
     </property>
     <property name="text">
      <string>Run Fit</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="outputlabel">
+    <property name="geometry">
+     <rect>
+      <x>40</x>
+      <y>380</y>
+      <width>121</width>
+      <height>181</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>16</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>deltaH = 
+deltaS = 
+ J= 
+min. ads. = 
+max. ads. = </string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaHainit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>100</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-5000</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaSaInit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>140</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-50</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaHbinit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>180</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-5000</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaSbInit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>220</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-50</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="Jinit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>260</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="minadsinit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>300</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="maxadsinit">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>340</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>1</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="deltaHalabel">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>110</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>deltaHa</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="initialvalueslabel">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>70</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Initial Values</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="deltaSalabel">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>150</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>deltaSa</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="deltaHblabel">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>190</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>deltaHb</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="deltaSblabel">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>230</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>deltaSb</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="Jlabel">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>270</y>
+      <width>21</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>J</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="minadslabel">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>310</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>min. ads.</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="maxadslabel">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>350</y>
+      <width>47</width>
+      <height>13</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>max. ads.</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="updateInitialValuesButton">
+    <property name="geometry">
+     <rect>
+      <x>430</x>
+      <y>490</y>
+      <width>111</width>
+      <height>23</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Update initial values</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaHbLowbound">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>180</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-50000</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaHaLowbound">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>100</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-50000</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaSbLowbound">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>220</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-500</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="maxadsLowbound">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>340</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaSaLowbound">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>140</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-500</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="minadsLowbound">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>300</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-1</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="JLowbound">
+    <property name="geometry">
+     <rect>
+      <x>530</x>
+      <y>260</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>-10000</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="initialvalueslabel_2">
+    <property name="geometry">
+     <rect>
+      <x>550</x>
+      <y>70</y>
+      <width>121</width>
+      <height>16</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>14</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Bounds</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaSbHighBound">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>220</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>100</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="JHighbound">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>260</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>10000</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="minadsHighbound">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>300</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>0</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaSaHighbound">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>140</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>100</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaHbHighbound">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>180</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>500</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="deltaHaHighbound">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>100</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>500</string>
+    </property>
+   </widget>
+   <widget class="QPlainTextEdit" name="maxadsHighbound">
+    <property name="geometry">
+     <rect>
+      <x>590</x>
+      <y>340</y>
+      <width>51</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="plainText">
+     <string>20</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="tempUnit">
+    <property name="geometry">
+     <rect>
+      <x>50</x>
+      <y>340</y>
+      <width>69</width>
+      <height>22</height>
+     </rect>
+    </property>
+    <item>
+     <property name="text">
+      <string>°C</string>
+     </property>
+    </item>
+    <item>
+     <property name="text">
+      <string>K</string>
+     </property>
+    </item>
+   </widget>
+   <widget class="QLabel" name="tempUnitLabel">
+    <property name="geometry">
+     <rect>
+      <x>140</x>
+      <y>340</y>
+      <width>141</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
+    <property name="text">
+     <string>Temperature Unit</string>
     </property>
    </widget>
   </widget>
@@ -195,6 +668,9 @@ p, li { white-space: pre-wrap; }
   <action name="actionopen">
    <property name="text">
     <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
  </widget>
