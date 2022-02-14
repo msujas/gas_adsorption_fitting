@@ -12,6 +12,7 @@ class One_site_adsorption_profile:
         self.H = -5000
         self.S = -50
         self.J = 0
+        self.p = 1
         self.minads = 0
         self.maxads = 1
         self.values = np.array([self.H,self.S,self.J,self.minads,self.maxads])
@@ -25,7 +26,11 @@ class One_site_adsorption_profile:
         uses numpy.loadtxt. Positional arguments: file. Keyword arguments:
         delimiter=None, skiprows=0, usecols=None.
         '''
+        self.filename = file
         self.directory = os.path.split(file)[0]+'/'
+
+        if self.directory == '/':
+            self.directory = os.path.curdir
         R = 8.31446
         if file.endswith('.csv'):
             delimiter = ','
@@ -50,14 +55,14 @@ class One_site_adsorption_profile:
 
         self.update_values()
         self.fit = self.one_site_simple(self.H,self.S,self.minads,self.maxads)
-        print('gamma =',self.gamma)
+
         self.Keq = self.gamma/(1-self.gamma)
         self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
 
     def one_site_simple(self,Hi,Si,minadsi,maxadsi):
         deltaG = Hi - self.T*Si
         R = 8.31446
-        gamma = np.exp(-deltaG/(R*self.T))/(1+np.exp(-deltaG/(R*self.T)))
+        gamma = np.exp(-deltaG/(R*self.T))*self.p/(1+np.exp(-deltaG/(R*self.T))*self.p)
         adsorption = gamma*(maxadsi-minadsi) + minadsi
         return adsorption
     def one_site_simple_optimise(self,x=np.array([None])):
@@ -78,16 +83,19 @@ class One_site_adsorption_profile:
         yopt = optimize.least_squares(self.one_site_simple_optimise,x,bounds=bounds)
         self.H = yopt['x'][0]
         self.S = yopt['x'][1]
-        #self.J = yopt['x'][2]
+
         if minmaxfix == False:
             self.minads = yopt['x'][2]
             self.maxads = yopt['x'][3]
         R = 8.31446
+        self.fit = self.one_site_simple(self.H,self.S,self.minads,self.maxads)
+        rw = np.sum(self.ads-self.fit)**2/np.sum(self.ads**2)
         string = f'''dH = {self.H}
 dS = {self.S}
 min. ads. = {self.minads}
 max. ads = {self.maxads}
-        '''
+rw = {rw}
+'''
         print(string)
 
         f = open(self.directory+'fitted_parameters.txt','w')
@@ -98,12 +106,120 @@ max. ads = {self.maxads}
         self.Keq = self.gamma/(1-self.gamma)
         self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
 
-        self.fit = self.one_site_simple(self.H,self.S,self.minads,self.maxads)
+
+        return yopt
+
+    def one_site_coop(self,Hi,Si,Ji,minadsi,maxadsi):
+
+        gamma = (self.ads-minadsi)/(maxadsi-minadsi)
+        R = 8.31446
+
+        #gamma = np.arange(0.001,0.999,0.001)
+        Tfit = (Hi-2*Ji*(2*gamma-1))/(Si-R*np.log(gamma/(self.p*(1-gamma))))
+        return Tfit
+
+    def one_site_coop_optimise(self,x):
+        Hi = x[0]
+        Si = x[1]
+        Ji = x[2]
+        minadsi = self.minads
+        maxadsi = self.maxads
+        if len(x) == 5:
+            minadsi = x[3]
+            maxadsi = x[4]
+
+        Tfit = self.one_site_coop(Hi,Si,Ji,minadsi,maxadsi)
+        return self.T - Tfit
+    def run_coop_optimise(self,x,bounds):
+        yopt = optimize.least_squares(self.one_site_coop_optimise,x,bounds = bounds)
+        params = yopt['x']
+        self.H = params[0]
+        self.S = params[1]
+        self.J = params[2]
+        if len(x) == 5:
+            self.minads = params[3]
+            self.maxads = params[4]
+        self.update_values()
+        self.fit = self.one_site_coop(self.H,self.S,self.J,self.minads,self.maxads)
+        rw = np.sum(self.ads-self.fit)**2/np.sum(self.ads**2)
+        output = f'''deltaH = {self.H}
+deltaS = {self.S}
+J = {self.J}
+min. ads. = {self.minads}
+max. ads. = {self.maxads}
+rw = {rw}'''
+        print(output)
+        return yopt
+
+    def twosite_nonequiv(self,Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi):
+        R = 8.31446
+        dA = -1*(Hai-self.T*Sai)
+        dB = -1*(Hbi-self.T*Sbi)
+        S = dA + dB
+        D = dA - dB
+
+        siga = (2*np.exp(-Jabi/(R*self.T))*np.sinh(S/(R*self.T)) + \
+        2*np.exp(Jabi/(R*self.T))*np.sinh(D/(R*self.T)))/ \
+        (2*np.exp(-Jabi/(R*self.T))*np.cosh(S/(R*self.T))+\
+        2*np.exp(Jabi/(R*self.T))*np.cosh(D/(R*self.T)))
+
+
+        sigb = (2*np.exp(-Jabi/(R*self.T))*np.sinh(S/(R*self.T)) - \
+        2*np.exp(Jabi/(R*self.T))*np.sinh(D/(R*self.T)))/ \
+        (2*np.exp(-Jabi/(R*self.T))*np.cosh(S/(R*self.T))+\
+        2*np.exp(Jabi/(R*self.T))*np.cosh(D/(R*self.T)))
+
+        gamma_a = (siga+1)/2
+        gamma_b = (sigb+1)/2
+        gamma_tot = (gamma_a + gamma_b)/2
+        adsfit1 = gamma_a*(maxadsi-minadsi)+minadsi
+        adsfit2 = gamma_b*(maxadsi-minadsi)+minadsi
+        adsav = (adsfit1+adsfit2)/2
+        #sigtot = (siga+sigb)/2
+        return adsav
+    def twosite_optimise(self,x):
+        Hai = x[0]
+        Hbi = x[1]
+        Sai = x[2]
+        Sbi = x[3]
+        Jabi = x[4]
+        minadsi = self.minads
+        maxadsi = self.maxads
+        if len(x) == 7:
+            minadsi = x[5]
+            maxadsi = x[6]
+        adsavfit = self.twosite_nonequiv(Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi)
+        return self.ads - adsavfit
+
+    def run_twosite_optimise(self,x,bounds):
+        yopt = optimize.least_squares(self.twosite_optimise,x,bounds = bounds)
+        params = yopt['x']
+        self.H = params[0]
+        self.Hb = params[1]
+        self.S = params[2]
+        self.Sb = params[3]
+        self.J = params[4]
+        if len(x) == 7:
+            self.minads = params[5]
+            self.maxads = params[6]
+        self.update_values()
+        self.fit = self.twosite_nonequiv(self.H,self.Hb,self.S,self.Sb,self.J,self.minads,self.maxads)
+        rw = np.sum(self.ads - self.fit)**2/np.sum(self.ads**2)
+        string = (f"deltaHa = {self.H}\n"
+        f"deltaHb = {self.Hb}\n"
+        f"deltaSa = {self.S}\n"
+        f"deltaSb {self.Sb}\n"
+        f"Jab = {self.J}\n"
+        f"min. ads. = {self.minads}\n"
+        f"max. ads. = {self.maxads}\n"
+        f"rw = {rw}")
+        print(string)
+
         return yopt
     def adsorption_plot(self):
         plt.plot(self.T,self.ads,'o',label = 'adsorption')
         plt.plot(self.T,self.fit, label = 'fit')
-        plt.xlim(self.T[0],self.T[-1])
+        plt.xlim(min(self.T),max(self.T))
         plt.xlabel('Temperature (K)')
         plt.ylabel('Adsorption')
         plt.legend()
@@ -124,15 +240,27 @@ max. ads = {self.maxads}
         ax1.set_xlabel('Temperature (K)')
         ax1.set_ylabel('Adsorption')
         ax1.legend()
-
         ax2.plot(1/self.T,np.log(self.Keq),'o',label = 'measured (min. max. normalised)')
         ax2.plot(1/self.T,np.log(self.Keq_fit),label = 'fit')
         ax2.set_xlim(min(1/self.T),max(1/self.T))
         ax2.set_xlabel('1/T (K$^{-1}$)')
         ax2.set_ylabel('ln(K)')
         ax2.legend()
-
         plt.show()
+
+    def one_site_coop_plot(self):
+        plt.plot(self.T,self.ads,'o',label = 'adsorption')
+        plt.plot(self.fit,self.ads,label = 'fit')
+        plt.xlabel('Temperature (K)')
+        plt.ylabel('adsorption')
+        plt.xlim(min(self.T),max(self.T))
+        plt.legend()
+        plt.show()
+
+
+
+
+
 
 
 
@@ -177,6 +305,9 @@ class Two_site_adsorption_profile:
         delimiter=None, skiprows=0, usecols=None.
         '''
         self.directory = os.path.split(file)[0]+'/'
+        print('directory:',self.directory)
+        if self.directory == '/':
+            self.directory = os.path.curdir
         if file.endswith('.csv'):
             delimiter = ','
         for i in range(20):
@@ -279,7 +410,7 @@ class Two_site_adsorption_profile:
 
         self.update_values()
 
-        rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2))**2
+        rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2)**2)
         string = f'''dHa = {self.Ha}
 dHb = {self.Hb}
 dSa = {self.Sa}

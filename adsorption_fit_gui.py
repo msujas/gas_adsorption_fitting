@@ -193,13 +193,29 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menufile.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.InputType.setCurrentIndex(1)
+        self.InputType.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
-
+        self.InputType.currentTextChanged.connect(self.del_item_in_combobox)
 
         self.optimiseButton.clicked.connect(self.click_optimise)
         self.updateInitialValuesButton.clicked.connect(self.click_update)
         self.actionopen.triggered.connect(self.open_file)
+
+    def del_item_in_combobox(self):
+        if self.InputType.currentText() == "Two sites":
+            self.ModelType.clear()
+            self.ModelType.addItem("")
+            self.ModelType.setItemText(0, "Two sites, intra-pore interaction")
+        elif self.InputType.currentText() == 'Single site':
+            self.ModelType.clear()
+            self.ModelType.addItem("")
+            self.ModelType.addItem("")
+            self.ModelType.addItem("")
+
+            self.ModelType.setItemText(0,  "Simple single site")
+            self.ModelType.setItemText(1,  "Single site cooperative")
+            self.ModelType.setItemText(2, "Two sites, intra-pore interaction")
+
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Adsorption profile fit"))
@@ -208,7 +224,7 @@ class Ui_MainWindow(object):
 "<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n"
 "p, li { white-space: pre-wrap; }\n"
 "</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:8.25pt; font-weight:400; font-style:normal;\">\n"
-"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">C:\\Users\\kenneth1a\\Documents\\beamline data\\Yaroslav_Iurii_data\\Ar_occupancy_1bar.txt</p></body></html>"))
+"<p style=\" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;\">Ar_occupancy_1bar.txt</p></body></html>"))
 
         output_string = ("deltaH = \n"
         "deltaS = \n"
@@ -235,7 +251,7 @@ class Ui_MainWindow(object):
         self.tempUnitLabel.setText(_translate("MainWindow", "Temperature Unit"))
 
         self.ModelType.setItemText(2, _translate("MainWindow", "Two sites, intra-pore interaction"))
-        self.ModelTypeLabel.setText(_translate("MainWindow", "Model type\n(doesn't do anything\n right now)"))
+        self.ModelTypeLabel.setText(_translate("MainWindow", "Model type"))
         self.optimiseButton.setText(_translate("MainWindow", "Run Fit"))
         self.menufile.setTitle(_translate("MainWindow", "File"))
         self.actionopen.setText(_translate("MainWindow", "Open"))
@@ -312,19 +328,54 @@ class Ui_MainWindow(object):
             ads_profile.J = float(self.Jinit.toPlainText())
             ads_profile.minads = float(self.minadsinit.toPlainText())
             ads_profile.maxads = float(self.maxadsinit.toPlainText())
-            if self.MinMaxRefine.currentText() == 'Off':
-                bounds = ([Halow,Salow],[Hahigh,Sahigh])
-                ads_profile.run_optimise(x = np.array([ads_profile.H, ads_profile.S]),bounds = bounds)
-            elif self.MinMaxRefine.currentText() == 'On':
-                bounds = ([Halow,Salow,minadslow,maxadslow],[Hahigh,Sahigh,minadshigh,maxadshigh])
-                ads_profile.run_optimise(x = np.array([ads_profile.H, ads_profile.S, ads_profile.minads, ads_profile.maxads]),
-                bounds = bounds)
+            ads_profile.Hb = float(self.deltaHbinit.toPlainText())
+            ads_profile.Sb = float(self.deltaSbInit.toPlainText())
 
-            ads_profile.ads_vant_hoff_plot()
-            output_string = (f"deltaH = {ads_profile.H: .1f}\n"
-            f"deltaS = {ads_profile.S :.2f}\n"
-            f"min. ads. = {ads_profile.minads :.3f}\n"
-            f"max. ads = {ads_profile.maxads :.3f}")
+            if self.ModelType.currentText() == 'Simple single site':
+                if self.MinMaxRefine.currentText() == 'Off':
+                    bounds = ([Halow,Salow],[Hahigh,Sahigh])
+                    x = np.array([ads_profile.H, ads_profile.S])
+                elif self.MinMaxRefine.currentText() == 'On':
+                    bounds = ([Halow,Salow,minadslow,maxadslow],[Hahigh,Sahigh,minadshigh,maxadshigh])
+                    x = np.array([ads_profile.H, ads_profile.S,ads_profile.minads,ads_profile.maxads])
+                ads_profile.run_optimise(x=x,bounds = bounds)
+                ads_profile.ads_vant_hoff_plot()
+                output_string = (f"deltaH = {ads_profile.H: .1f}\n"
+                f"deltaS = {ads_profile.S :.2f}\n"
+                f"min. ads. = {ads_profile.minads :.3f}\n"
+                f"max. ads = {ads_profile.maxads :.3f}")
+            elif self.ModelType.currentText() == 'Single site cooperative':
+                if self.MinMaxRefine.currentText() == 'Off':
+                    bounds = ([Halow,Salow,Jlow],[Hahigh,Sahigh,Jhigh])
+                    x = np.array([ads_profile.H, ads_profile.S, ads_profile.J])
+                elif self.MinMaxRefine.currentText() == 'On':
+                    bounds = ([Halow,Salow,Jlow,minadslow,maxadslow],[Hahigh,Sahigh,Jhigh,minadshigh,maxadshigh])
+                    x = np.array([ads_profile.H, ads_profile.S, ads_profile.J,ads_profile.minads,ads_profile.maxads])
+                ads_profile.run_coop_optimise(x = x,  bounds = bounds)
+                ads_profile.one_site_coop_plot()
+                output_string = (f"deltaH = {ads_profile.H: .1f}\n"
+                f"deltaS = {ads_profile.S :.2f}\n"
+                f"J = {ads_profile.J :.1f}\n"
+                f"min. ads. = {ads_profile.minads :.3f}\n"
+                f"max. ads = {ads_profile.maxads :.3f}")
+            elif self.ModelType.currentText() == 'Two sites, intra-pore interaction':
+                if self.MinMaxRefine.currentText() == 'Off':
+                    bounds = ([Halow,Hblow,Salow,Sblow,Jlow],[Hahigh,Hblow,Sahigh,Hbhigh,Jhigh])
+                    x = np.array([ads_profile.H,ads_profile.Hb,ads_profile.S,ads_profile.Sb,ads_profile.J])
+                elif self.MinMaxRefine.currentText() == 'On':
+                    bounds = ([Halow,Hblow,Salow,Sblow,Jlow,minadslow,maxadslow],[Hahigh,Hbhigh,Sahigh,Hbhigh,Jhigh,minadshigh,maxadshigh])
+                    x = np.array([ads_profile.H,ads_profile.Hb,ads_profile.S,ads_profile.Sb,ads_profile.J,ads_profile.minads,ads_profile.maxads])
+                ads_profile.run_twosite_optimise(x=x, bounds = bounds)
+                ads_profile.adsorption_plot()
+                output_string = (f"deltaHa = {ads_profile.H: .1f}\n"
+                f"deltaSa = {ads_profile.S :.2f}\n"
+                f"deltaHb = {ads_profile.Hb: .1f}\n"
+                f"deltaSb = {ads_profile.Sb :.2f}\n"
+                f"J = {ads_profile.J :.1f}\n"
+                f"min. ads. = {ads_profile.minads :.3f}\n"
+                f"max. ads = {ads_profile.maxads :.3f}")
+
+
             self.outputLabel.setText(output_string)
             self.outputLabel.adjustSize()
 
