@@ -27,6 +27,9 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(14)
         self.outputLabel.setFont(font)
+        self.scipylabel = QtWidgets.QLabel(self.centralwidget)
+        self.scipylabel.setGeometry(QtCore.QRect(250, 500, 150, 60))
+        self.scipylabel.setObjectName("scipylabel")
         self.InputFile = QtWidgets.QTextEdit(self.centralwidget)
         self.InputFile.setGeometry(QtCore.QRect(20, 30, 471, 21))
         self.InputFile.setObjectName("InputFile")
@@ -252,10 +255,14 @@ class Ui_MainWindow(object):
 
         self.ModelType.setItemText(2, _translate("MainWindow", "Two sites, intra-pore interaction"))
         self.ModelTypeLabel.setText(_translate("MainWindow", "Model type"))
+
+        self.scipylabel.setText(_translate("MainWindow","Fitting done with SciPy,\ngui made with PyQt5"))
+
         self.optimiseButton.setText(_translate("MainWindow", "Run Fit"))
         self.menufile.setTitle(_translate("MainWindow", "File"))
         self.actionopen.setText(_translate("MainWindow", "Open"))
         self.actionopen.setShortcut(_translate("MainWindow", "Ctrl+O"))
+
 
         self.Hai = '-5000'
         self.Hbi = '-5000'
