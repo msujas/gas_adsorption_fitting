@@ -30,7 +30,7 @@ class One_site_adsorption_profile:
         self.directory = os.path.split(file)[0]+'/'
 
         if self.directory == '/':
-            self.directory = os.path.curdir
+            self.directory = os.path.curdir +'/'
         R = 8.31446
         if file.endswith('.csv'):
             delimiter = ','
@@ -97,15 +97,19 @@ max. ads = {self.maxads}
 rw = {rw}
 '''
         print(string)
-
-        f = open(self.directory+'fitted_parameters.txt','w')
+        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_fit_pars.txt'
+        f = open(self.directory+output_filename,'w')
         f.write(string)
         f.close()
+        print('fitted parameters saved to',output_filename)
 
         self.update_values()
         self.Keq = self.gamma/(1-self.gamma)
         self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
-
+        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        np.savetxt(fit_filename,np.array([self.T,self.ads,self.fit]).transpose(),
+        header = 'T(K) adsorption fit')
+        print('fitted data saved to',fit_filename)
 
         return yopt
 
@@ -141,7 +145,7 @@ rw = {rw}
             self.maxads = params[4]
         self.update_values()
         self.fit = self.one_site_coop(self.H,self.S,self.J,self.minads,self.maxads)
-        rw = np.sum(self.ads-self.fit)**2/np.sum(self.ads**2)
+        rw = np.sum(self.T-self.fit)**2/np.sum(self.T**2)
         output = f'''deltaH = {self.H}
 deltaS = {self.S}
 J = {self.J}
@@ -149,6 +153,15 @@ min. ads. = {self.minads}
 max. ads. = {self.maxads}
 rw = {rw}'''
         print(output)
+        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_fit_pars.txt'
+        f = open(self.directory+output_filename,'w')
+        f.write(output)
+        f.close()
+        print('fitted parameters saved to',output_filename)
+        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        np.savetxt(fit_filename,np.array([self.T,self.ads,self.fit]).transpose(),
+        header = 'T(K) adsorption fit')
+        print('fitted data saved to',fit_filename)
         return yopt
 
     def twosite_nonequiv(self,Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi):
@@ -214,7 +227,15 @@ rw = {rw}'''
         f"max. ads. = {self.maxads}\n"
         f"rw = {rw}")
         print(string)
-
+        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_fit_pars.txt'
+        f = open(self.directory+output_filename,'w')
+        f.write(string)
+        f.close()
+        print('fitted parameters saved to',output_filename)
+        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        np.savetxt(fit_filename,np.array([self.T,self.ads,self.fit]).transpose(),
+        header = 'T(K) adsorption fit')
+        print('fitted data saved to',fit_filename)
         return yopt
     def adsorption_plot(self):
         plt.plot(self.T,self.ads,'o',label = 'adsorption')
@@ -236,7 +257,7 @@ rw = {rw}'''
         fig, (ax1,ax2) = plt.subplots(2,1)
         ax1.plot(self.T,self.ads,'o',label = 'adsorption')
         ax1.plot(self.T,self.fit, label = 'fit')
-        ax1.set_xlim(self.T[0],self.T[-1])
+        ax1.set_xlim(min(self.T),max(self.T))
         ax1.set_xlabel('Temperature (K)')
         ax1.set_ylabel('Adsorption')
         ax1.legend()
@@ -304,10 +325,11 @@ class Two_site_adsorption_profile:
         uses numpy.loadtxt. Positional arguments: file. Keyword arguments:
         delimiter=None, skiprows=0, usecols=None.
         '''
+        self.filename = file
         self.directory = os.path.split(file)[0]+'/'
         print('directory:',self.directory)
         if self.directory == '/':
-            self.directory = os.path.curdir
+            self.directory = os.path.curdir +'/'
         if file.endswith('.csv'):
             delimiter = ','
         for i in range(20):
@@ -429,76 +451,79 @@ rw = {rw}
         if len(x) == 9:
 
             string += f'min. ads. 2 = {self.minads2}\nmax. ads. 2 = {self.maxads2}'
-
+        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_fit_pars.txt'
         print(string)
-        f = open(self.directory+'fitted_parameters.txt','w')
+        f = open(self.directory+output_filename,'w')
         f.write(string)
         f.close()
-        np.savetxt('adsorption_fit.txt',np.array([self.T,self.ads1,self.fit1,self.ads2,self.fit2]).transpose(),
-        header = 'T(K) adsorption1 fit1 adsorption2 fit2')
+        print('fitted parameters saved to',output_filename)
 
+        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        np.savetxt(fit_filename,np.array([self.T,self.ads1,self.fit1,self.ads2,self.fit2]).transpose(),
+        header = 'T(K) adsorption1 fit1 adsorption2 fit2')
+        print('fitted data saved to',fit_filename)
 
         return yopt
 
-    def twosite_nonequiv_intra_optimise_proportion_bounds(self,x=np.array([None])):
-        '''
-        x is list of arguments: Ha, Hb/Ha, Sa, Sb/Sa, Jab, minads, maxads2
-        Same as twosite_nonequiv_intra_optimise, but 2nd and 4th arguments are
-        Hb/Ha and Sb/Sa respectively as it makes it more convenient to bound Hb
-        and Sb to propotions of Ha and Sa.
-        '''
-        if x.any() == None:
-            x = self.value_proportion
-        Hai = x[0]
-        Hbi = Ha*x[1]
-        Sai = x[2]
-        Sbi = Sa*x[3]
-        Jabi = x[4]
-        minadsi = x[5]
-        maxadsi = x[6]
-
-        adsfit1,adsfit2 = self.twosite_nonequiv(Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi)
-
-
-        yresid  = np.append(self.ads1-adsfit1,self.ads2-adsfit2)
-        return yresid
-    def run_optimise_proportion(self,initial=np.array([None]),bounds=([-1*np.inf]*7,[np.inf]*7)):
-        if initial.any() == None:
-            initial = self.value_proportion
-
-        yopt = optimize.least_squares(self.twosite_nonequiv_intra_optimise_proportion_bounds,
-                                        initial, bounds = bounds)
-
-        print(yopt)
-        self.Ha = yopt['x'][0]
-        self.Hb = yopt['x'][1]
-        self.Sa = yopt['x'][2]
-        self.Sb = yopt['x'][3]*self.Sa
-        self.Jab = yopt['x'][4]
-        self.minads = yopt['x'][5]
-        self.maxads = yopt['x'][6]
-        self.update_values()
-
-        rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2))**2
-        string = f'''dHa = {self.Ha}
-dHb = {self.Hb}
-dSa = {self.Sa}
-dSb = {self.Sb}
-Jab = {self.Jab}
-min. ads. = {self.minads}
-max. ads. = {self.maxads}
-rw = {rw}
-'''
-        print(string)
-        f = open('fitted_parameters.txt','w')
-        f.write(string)
-        f.close()
-        self.fit1, self.fit2 = self.twosite_nonequiv(*self.values)
-        np.savetxt('adsorption_fit.txt',np.array([self.T,self.ads1,self.fit1,
-        self.ads2,self.fit2]).transpose(),
-        header = 'T(K) adsorption1 fit1 adsorption2 fit2')
-
-        return yopt
+#    def twosite_nonequiv_intra_optimise_proportion_bounds(self,x=np.array([None])):
+#        '''
+#        x is list of arguments: Ha, Hb/Ha, Sa, Sb/Sa, Jab, minads, maxads2
+#        Same as twosite_nonequiv_intra_optimise, but 2nd and 4th arguments are
+#        Hb/Ha and Sb/Sa respectively as it makes it more convenient to bound Hb
+#        and Sb to propotions of Ha and Sa.
+#        '''
+#        if x.any() == None:
+#            x = self.value_proportion
+#        Hai = x[0]
+#        Hbi = Ha*x[1]
+#        Sai = x[2]
+#        Sbi = Sa*x[3]
+#        Jabi = x[4]
+#        minadsi = x[5]
+#        maxadsi = x[6]
+#
+#        adsfit1,adsfit2 = self.twosite_nonequiv(Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi)
+#
+#
+#        yresid  = np.append(self.ads1-adsfit1,self.ads2-adsfit2)
+#        return yresid
+#    def run_optimise_proportion(self,initial=np.array([None]),bounds=([-1*np.inf]*7,[np.inf]*7)):
+#        if initial.any() == None:
+#            initial = self.value_proportion
+#
+#        yopt = optimize.least_squares(self.twosite_nonequiv_intra_optimise_proportion_bounds,
+#                                        initial, bounds = bounds)
+#
+#        print(yopt)
+#        self.Ha = yopt['x'][0]
+#        self.Hb = yopt['x'][1]
+#        self.Sa = yopt['x'][2]
+#        self.Sb = yopt['x'][3]*self.Sa
+#        self.Jab = yopt['x'][4]
+#        self.minads = yopt['x'][5]
+#        self.maxads = yopt['x'][6]
+#        self.update_values()
+#
+#        rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2))**2
+#        string = f'''dHa = {self.Ha}
+#dHb = {self.Hb}
+#dSa = {self.Sa}
+#dSb = {self.Sb}
+#Jab = {self.Jab}
+#min. ads. = {self.minads}
+#max. ads. = {self.maxads}
+#rw = {rw}
+#'''
+#        print(string)
+#        f = open('fitted_parameters.txt','w')
+#        f.write(string)
+#        f.close()
+#        self.fit1, self.fit2 = self.twosite_nonequiv(*self.values)
+#        np.savetxt('adsorption_fit.txt',np.array([self.T,self.ads1,self.fit1,
+#        self.ads2,self.fit2]).transpose(),
+#        header = 'T(K) adsorption1 fit1 adsorption2 fit2')
+#
+#        return yopt
 
 
 
