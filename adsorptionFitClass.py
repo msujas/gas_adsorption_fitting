@@ -327,7 +327,6 @@ class Two_site_adsorption_profile:
         '''
         self.filename = file
         self.directory = os.path.split(file)[0]+'/'
-        print('directory:',self.directory)
         if self.directory == '/':
             self.directory = os.path.curdir +'/'
         if file.endswith('.csv'):
@@ -432,7 +431,7 @@ class Two_site_adsorption_profile:
 
         self.update_values()
 
-        rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2)**2)
+        rw = np.sum(yopt['fun'])**2/np.sum(np.append(self.ads1,self.ads2)**2)
         string = f'''dHa = {self.Ha}
 dHb = {self.Hb}
 dSa = {self.Sa}
@@ -465,68 +464,94 @@ rw = {rw}
 
         return yopt
 
-#    def twosite_nonequiv_intra_optimise_proportion_bounds(self,x=np.array([None])):
-#        '''
-#        x is list of arguments: Ha, Hb/Ha, Sa, Sb/Sa, Jab, minads, maxads2
-#        Same as twosite_nonequiv_intra_optimise, but 2nd and 4th arguments are
-#        Hb/Ha and Sb/Sa respectively as it makes it more convenient to bound Hb
-#        and Sb to propotions of Ha and Sa.
-#        '''
-#        if x.any() == None:
-#            x = self.value_proportion
-#        Hai = x[0]
-#        Hbi = Ha*x[1]
-#        Sai = x[2]
-#        Sbi = Sa*x[3]
-#        Jabi = x[4]
-#        minadsi = x[5]
-#        maxadsi = x[6]
-#
-#        adsfit1,adsfit2 = self.twosite_nonequiv(Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi)
-#
-#
-#        yresid  = np.append(self.ads1-adsfit1,self.ads2-adsfit2)
-#        return yresid
-#    def run_optimise_proportion(self,initial=np.array([None]),bounds=([-1*np.inf]*7,[np.inf]*7)):
-#        if initial.any() == None:
-#            initial = self.value_proportion
-#
-#        yopt = optimize.least_squares(self.twosite_nonequiv_intra_optimise_proportion_bounds,
-#                                        initial, bounds = bounds)
-#
-#        print(yopt)
-#        self.Ha = yopt['x'][0]
-#        self.Hb = yopt['x'][1]
-#        self.Sa = yopt['x'][2]
-#        self.Sb = yopt['x'][3]*self.Sa
-#        self.Jab = yopt['x'][4]
-#        self.minads = yopt['x'][5]
-#        self.maxads = yopt['x'][6]
-#        self.update_values()
-#
-#        rw = np.sum(yopt['fun'])/np.sum(np.append(self.ads1,self.ads2))**2
-#        string = f'''dHa = {self.Ha}
-#dHb = {self.Hb}
-#dSa = {self.Sa}
-#dSb = {self.Sb}
-#Jab = {self.Jab}
-#min. ads. = {self.minads}
-#max. ads. = {self.maxads}
-#rw = {rw}
-#'''
-#        print(string)
-#        f = open('fitted_parameters.txt','w')
-#        f.write(string)
-#        f.close()
-#        self.fit1, self.fit2 = self.twosite_nonequiv(*self.values)
-#        np.savetxt('adsorption_fit.txt',np.array([self.T,self.ads1,self.fit1,
-#        self.ads2,self.fit2]).transpose(),
-#        header = 'T(K) adsorption1 fit1 adsorption2 fit2')
-#
-#        return yopt
 
 
+    def two_site_inter_sigma_solver(self,x,Hai,Hbi,Sai,Sbi,Jabi,J1i,minadsi,maxadsi):
+        R = 8.31446
+        Ga = Hai-self.T*Sai
+        Gb = Hbi-self.T*Sbi
+        lenx_half = int(len(x)/2)
+        adsa_guess = x[:lenx_half]
+        adsb_guess = x[lenx_half:]
+        sigmaa_guess = 2*((adsa_guess-minadsi)/(maxadsi-minadsi))-1
+        sigmab_guess = 2*((adsb_guess-minadsi)/(maxadsi-minadsi))-1
+        sigmaa = np.tanh((-Ga-2*Jabi*sigmab_guess-2*J1i*sigmaa_guess)/(R*self.T))
+        sigmab = np.tanh((-Gb-2*Jabi*sigmaa_guess-2*J1i*sigmab_guess)/(R*self.T))
 
+        return np.append(sigmaa-sigmaa_guess,sigmab-sigmab_guess)
+
+    def two_site_inter_fit(self,adsa_guess,adsb_guess,Hai,Hbi,Sai,Sbi,Jabi,J1i,minadsi,maxadsi):
+        R = 8.31446
+        Ga = Hai-self.T*Sai
+        Gb = Hbi-self.T*Sbi
+        sigmaa_guess = 2*((adsa_guess-minadsi)/(maxadsi-minadsi))-1
+        sigmab_guess = 2*((adsb_guess-minadsi)/(maxadsi-minadsi))-1
+        sigmaa = np.tanh((-Ga-2*Jabi*sigmab_guess-2*J1i*sigmaa_guess)/(R*self.T))
+        sigmab = np.tanh((-Gb-2*Jabi*sigmaa_guess-2*J1i*sigmab_guess)/(R*self.T))
+        gammaa = (sigmaa+1)/2
+        gammab = (sigmab+1)/2
+        adsa = gammaa*(maxadsi-minadsi) + minadsi
+        adsb = gammab*(maxadsi-minadsi) + minadsi
+        return adsa,adsb
+
+    def two_site_inter_optimise(self,x):
+        Hai = x[0]
+        Hbi = x[1]
+        Sai = x[2]
+        Sbi = x[3]
+        Jabi = x[4]
+        J1i = x[5]
+        minadsi = self.minads
+        maxadsi = self.maxads
+        if len(x) == 8:
+            minadsi = x[6]
+            maxadsi = x[7]
+        adsa_guess,adsb_guess = self.twosite_nonequiv(Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi,minadsi,maxadsi)
+        initial = np.append(adsa_guess,adsb_guess)
+        yopt_sigma = optimize.least_squares(self.two_site_inter_sigma_solver,initial,args = (Hai,Hbi,Sai,Sbi,Jabi,J1i,minadsi,maxadsi))
+        lenopt_half = int(len(yopt_sigma['x'])/2)
+        adsa_fit = yopt_sigma['x'][:lenopt_half]
+        adsb_fit = yopt_sigma['x'][lenopt_half:]
+        self.adsa_guess = adsa_fit
+        self.adsb_guess = adsb_fit
+        return np.append(self.ads1 - adsa_fit,self.ads2 - adsb_fit)
+
+    def run_twosite_inter_optimise(self,x,bounds):
+
+        yopt = optimize.least_squares(self.two_site_inter_optimise,x,bounds = bounds)
+
+
+        self.Ha = yopt['x'][0]
+        self.Hb = yopt['x'][1]
+        self.Sa = yopt['x'][2]
+        self.Sb = yopt['x'][3]
+        self.Jab = yopt['x'][4]
+        self.J1 = yopt['x'][5]
+        if len(x) == 8:
+            self.minads = yopt['x'][6]
+            self.maxads = yopt['x'][7]
+        adsa_guess,adsb_guess = self.twosite_nonequiv(self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.minads,self.maxads,self.minads,self.maxads)
+        initial = np.append(adsa_guess,adsb_guess)
+        yopt_sigma = optimize.least_squares(self.two_site_inter_sigma_solver,initial,args = (self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.J1,self.minads,self.maxads))
+        lenopt_half = int(len(yopt_sigma['x'])/2)
+        self.adsa_guess = yopt_sigma['x'][:lenopt_half]
+        self.adsb_guess = yopt_sigma['x'][lenopt_half:]
+        #print(yopt_sigma['fun'])
+
+        self.fit1,self.fit2 = self.two_site_inter_fit(self.adsa_guess,self.adsb_guess,self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.J1,self.minads,self.maxads)
+        rw = np.sum(yopt['fun'])**2/np.sum(np.append(self.ads1,self.ads2)**2)
+        string = f'''dHa = {self.Ha}
+dHb = {self.Hb}
+dSa = {self.Sa}
+dSb = {self.Sb}
+Jab = {self.Jab}
+J1 = {self.J1}
+min. ads. = {self.minads}
+max. ads. = {self.maxads}
+rw = {rw}
+'''
+        print(string)
+        return yopt
 
     def adsorption_plot(self):
         adsav = (self.ads1 + self.ads2)/2
@@ -541,4 +566,30 @@ rw = {rw}
         plt.ylabel('adsorption')
         plt.xlim(min(self.T),max(self.T))
         plt.legend()
+        plt.show()
+
+    def adsorption_plot_inter(self):
+        fig,(ax1,ax2) = plt.subplots(2,1)
+        adsav = (self.ads1 + self.ads2)/2
+        fitav = (self.fit1 + self.fit2)/2
+        ax1.plot(self.T,self.fit1,'o',label = 'fit 1')
+        ax1.plot(self.T,self.fit2,'o', label = 'fit 2')
+        ax1.plot(self.T,self.adsa_guess, label = 'guess 1')
+        ax1.plot(self.T,self.adsb_guess, label = 'guess 2')
+        ax1.set_xlabel('Temperature (K)')
+        ax1.set_ylabel('adsorption')
+        ax1.set_xlim(min(self.T),max(self.T))
+        ax1.legend()
+
+        ax2.plot(self.T,self.ads1,'o',label = 'adsorption 1')
+        ax2.plot(self.T,self.ads2,'o', label = 'adsorption 2')
+        ax2.plot(self.T,adsav,'o', label = 'adsorption av.')
+        ax2.plot(self.T,self.fit1, label = 'fit 1')
+        ax2.plot(self.T,self.fit2, label = 'fit 2')
+        ax2.plot(self.T,fitav, label = 'fit av.')
+        ax2.set_xlabel('Temperature (K)')
+        ax2.set_ylabel('adsorption')
+        ax2.set_xlim(min(self.T),max(self.T))
+        ax2.legend()
+
         plt.show()

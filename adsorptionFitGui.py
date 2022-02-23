@@ -82,11 +82,16 @@ class Ui_MainWindow(object):
         self.Jinit = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.Jinit.setGeometry(QtCore.QRect(440, 260, 60, 31))
         self.Jinit.setObjectName("Jinit")
+
+        self.J1init = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.J1init.setGeometry(QtCore.QRect(440, 300, 60, 31))
+        self.J1init.setObjectName("J1init")
+
         self.minadsinit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.minadsinit.setGeometry(QtCore.QRect(440, 300, 60, 31))
+        self.minadsinit.setGeometry(QtCore.QRect(440, 340, 60, 31))
         self.minadsinit.setObjectName("minadsinit")
         self.maxadsinit = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.maxadsinit.setGeometry(QtCore.QRect(440, 340, 60, 31))
+        self.maxadsinit.setGeometry(QtCore.QRect(440, 380, 60, 31))
         self.maxadsinit.setObjectName("maxadsinit")
         self.deltaHalabel = QtWidgets.QLabel(self.centralwidget)
         self.deltaHalabel.setGeometry(QtCore.QRect(380, 110, 47, 13))
@@ -109,11 +114,20 @@ class Ui_MainWindow(object):
         self.Jlabel = QtWidgets.QLabel(self.centralwidget)
         self.Jlabel.setGeometry(QtCore.QRect(400, 270, 21, 16))
         self.Jlabel.setObjectName("Jlabel")
+        self.J1label = QtWidgets.QLabel(self.centralwidget)
+        self.J1label.setGeometry(QtCore.QRect(400, 310, 21, 16))
+        self.J1label.setObjectName("J1label")
+        self.Jlabel.setObjectName("Jlabel")
+
+        self.J1description = QtWidgets.QLabel(self.centralwidget)
+        self.J1description.setGeometry(QtCore.QRect(650, 293, 80, 45))
+        self.J1description.setObjectName("J1description")
+
         self.minadslabel = QtWidgets.QLabel(self.centralwidget)
-        self.minadslabel.setGeometry(QtCore.QRect(380, 310, 47, 13))
+        self.minadslabel.setGeometry(QtCore.QRect(380, 350, 47, 13))
         self.minadslabel.setObjectName("minadslabel")
         self.maxadslabel = QtWidgets.QLabel(self.centralwidget)
-        self.maxadslabel.setGeometry(QtCore.QRect(380, 350, 47, 13))
+        self.maxadslabel.setGeometry(QtCore.QRect(380, 390, 47, 13))
         self.maxadslabel.setObjectName("maxadslabel")
 
         self.updateInitialValuesButton = QtWidgets.QPushButton(self.centralwidget)
@@ -129,31 +143,32 @@ class Ui_MainWindow(object):
         self.deltaSbLowbound.setGeometry(QtCore.QRect(530, 220, 51, 31))
         self.deltaSbLowbound.setObjectName("deltaSbLowbound")
         self.maxadsLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.maxadsLowbound.setGeometry(QtCore.QRect(530, 340, 51, 31))
+        self.maxadsLowbound.setGeometry(QtCore.QRect(530, 380, 51, 31))
         self.maxadsLowbound.setObjectName("maxadsLowbound")
         self.deltaSaLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.deltaSaLowbound.setGeometry(QtCore.QRect(530, 140, 51, 31))
         self.deltaSaLowbound.setObjectName("deltaSaLowbound")
         self.minadsLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.minadsLowbound.setGeometry(QtCore.QRect(530, 300, 51, 31))
+        self.minadsLowbound.setGeometry(QtCore.QRect(530, 340, 51, 31))
         self.minadsLowbound.setObjectName("minadsLowbound")
         self.JLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.JLowbound.setGeometry(QtCore.QRect(530, 260, 51, 31))
         self.JLowbound.setObjectName("JLowbound")
-        self.boundsLabel = QtWidgets.QLabel(self.centralwidget)
-        self.boundsLabel.setGeometry(QtCore.QRect(550, 70, 121, 16))
-        font = QtGui.QFont()
-        font.setPointSize(14)
-        self.boundsLabel.setFont(font)
-        self.boundsLabel.setObjectName("boundsLabel")
+
+        self.J1Lowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.J1Lowbound.setGeometry(QtCore.QRect(530, 300, 51, 31))
+        self.J1Lowbound.setObjectName("J1Lowbound")
         self.deltaSbHighBound = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.deltaSbHighBound.setGeometry(QtCore.QRect(590, 220, 51, 31))
         self.deltaSbHighBound.setObjectName("deltaSbHighBound")
         self.JHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.JHighbound.setGeometry(QtCore.QRect(590, 260, 51, 31))
         self.JHighbound.setObjectName("JHighbound")
+        self.J1Highbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.J1Highbound.setGeometry(QtCore.QRect(590, 300, 51, 31))
+        self.J1Highbound.setObjectName("JHighbound")
         self.minadsHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.minadsHighbound.setGeometry(QtCore.QRect(590, 300, 51, 31))
+        self.minadsHighbound.setGeometry(QtCore.QRect(590, 340, 51, 31))
         self.minadsHighbound.setObjectName("minadsHighbound")
         self.deltaSaHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
         self.deltaSaHighbound.setGeometry(QtCore.QRect(590, 140, 51, 31))
@@ -165,8 +180,15 @@ class Ui_MainWindow(object):
         self.deltaHaHighbound.setGeometry(QtCore.QRect(590, 100, 51, 31))
         self.deltaHaHighbound.setObjectName("deltaHaHighbound")
         self.maxadsHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
-        self.maxadsHighbound.setGeometry(QtCore.QRect(590, 340, 51, 31))
+        self.maxadsHighbound.setGeometry(QtCore.QRect(590, 380, 51, 31))
         self.maxadsHighbound.setObjectName("maxadsHighbound")
+
+        self.boundsLabel = QtWidgets.QLabel(self.centralwidget)
+        self.boundsLabel.setGeometry(QtCore.QRect(550, 70, 121, 16))
+        font = QtGui.QFont()
+        font.setPointSize(14)
+        self.boundsLabel.setFont(font)
+        self.boundsLabel.setObjectName("boundsLabel")
 
         self.tempUnit = QtWidgets.QComboBox(self.centralwidget)
         self.tempUnit.setGeometry(QtCore.QRect(50, 310, 69, 22))
@@ -208,7 +230,9 @@ class Ui_MainWindow(object):
         if self.InputType.currentText() == "Two sites":
             self.ModelType.clear()
             self.ModelType.addItem("")
+            self.ModelType.addItem("")
             self.ModelType.setItemText(0, "Two sites, intra-pore interaction")
+            self.ModelType.setItemText(1,"Two sites, inter-pore interaction")
         elif self.InputType.currentText() == 'Single site':
             self.ModelType.clear()
             self.ModelType.addItem("")
@@ -269,6 +293,7 @@ class Ui_MainWindow(object):
         self.Sai = '-50'
         self.Sbi = '-50'
         self.Ji = '0'
+        self.J1i = '0'
         self.minadsi = '0'
         self.maxadsi = '1'
 
@@ -277,6 +302,7 @@ class Ui_MainWindow(object):
         self.deltaHbinit.setPlainText(_translate("MainWindow", self.Hbi))
         self.deltaSbInit.setPlainText(_translate("MainWindow", self.Sbi))
         self.Jinit.setPlainText(_translate("MainWindow", self.Ji))
+        self.J1init.setPlainText(_translate("MainWindow", self.J1i))
         self.minadsinit.setPlainText(_translate("MainWindow", self.minadsi))
         self.maxadsinit.setPlainText(_translate("MainWindow", self.maxadsi))
         self.deltaHalabel.setText(_translate("MainWindow", "deltaHa"))
@@ -285,6 +311,8 @@ class Ui_MainWindow(object):
         self.deltaHblabel.setText(_translate("MainWindow", "deltaHb"))
         self.deltaSblabel.setText(_translate("MainWindow", "deltaSb"))
         self.Jlabel.setText(_translate("MainWindow", "J"))
+        self.J1label.setText(_translate("MainWindow", "J1"))
+        self.J1description.setText(_translate("MainWindow", "for 2 site\ninterpore model"))
         self.minadslabel.setText(_translate("MainWindow", "min. ads."))
         self.maxadslabel.setText(_translate("MainWindow", "max. ads."))
 
@@ -295,10 +323,12 @@ class Ui_MainWindow(object):
         self.maxadsLowbound.setPlainText(_translate("MainWindow", "0"))
         self.deltaSaLowbound.setPlainText(_translate("MainWindow", "-500"))
         self.minadsLowbound.setPlainText(_translate("MainWindow", "-1"))
-        self.JLowbound.setPlainText(_translate("MainWindow", "-10000"))
+        self.JLowbound.setPlainText(_translate("MainWindow", "-1000"))
+        self.J1Lowbound.setPlainText(_translate("MainWindow", "-1000"))
         self.boundsLabel.setText(_translate("MainWindow", "Bounds"))
         self.deltaSbHighBound.setPlainText(_translate("MainWindow", "100"))
         self.JHighbound.setPlainText(_translate("MainWindow", "10000"))
+        self.J1Highbound.setPlainText(_translate("MainWindow", "10000"))
         self.minadsHighbound.setPlainText(_translate("MainWindow", "0"))
         self.deltaSaHighbound.setPlainText(_translate("MainWindow", "100"))
         self.deltaHbHighbound.setPlainText(_translate("MainWindow", "500"))
@@ -308,6 +338,7 @@ class Ui_MainWindow(object):
 
 
     def click_optimise(self):
+        print('running optimisation')
         Halow = float(self.deltaHaLowbound.toPlainText())
         Hahigh = float(self.deltaHaHighbound.toPlainText())
         Salow = float(self.deltaSaLowbound.toPlainText())
@@ -318,6 +349,8 @@ class Ui_MainWindow(object):
         Sbhigh = float(self.deltaSbHighBound.toPlainText())
         Jlow = float(self.JLowbound.toPlainText())
         Jhigh = float(self.JHighbound.toPlainText())
+        J1low = float(self.J1Lowbound.toPlainText())
+        J1high = float(self.J1Highbound.toPlainText())
         minadslow = float(self.minadsLowbound.toPlainText())
         minadshigh = float(self.minadsHighbound.toPlainText())
         maxadslow = float(self.maxadsLowbound.toPlainText())
@@ -347,8 +380,8 @@ class Ui_MainWindow(object):
                     x = np.array([ads_profile.H, ads_profile.S,ads_profile.minads,ads_profile.maxads])
                 ads_profile.run_optimise(x=x,bounds = bounds)
                 ads_profile.ads_vant_hoff_plot()
-                output_string = (f"deltaH = {ads_profile.H: .1f}\n"
-                f"deltaS = {ads_profile.S :.2f}\n"
+                output_string = (f"deltaH = {ads_profile.H: .1f} J/mol\n"
+                f"deltaS = {ads_profile.S :.2f} J/(mol K)\n"
                 f"min. ads. = {ads_profile.minads :.3f}\n"
                 f"max. ads = {ads_profile.maxads :.3f}")
             elif self.ModelType.currentText() == 'Single site cooperative':
@@ -360,9 +393,9 @@ class Ui_MainWindow(object):
                     x = np.array([ads_profile.H, ads_profile.S, ads_profile.J,ads_profile.minads,ads_profile.maxads])
                 ads_profile.run_coop_optimise(x = x,  bounds = bounds)
                 ads_profile.one_site_coop_plot()
-                output_string = (f"deltaH = {ads_profile.H: .1f}\n"
-                f"deltaS = {ads_profile.S :.2f}\n"
-                f"J = {ads_profile.J :.1f}\n"
+                output_string = (f"deltaH = {ads_profile.H: .1f} J/mol\n"
+                f"deltaS = {ads_profile.S :.2f} J/(mol K)\n"
+                f"J = {ads_profile.J :.1f} J/mol\n"
                 f"min. ads. = {ads_profile.minads :.3f}\n"
                 f"max. ads = {ads_profile.maxads :.3f}")
             elif self.ModelType.currentText() == 'Two sites, intra-pore interaction':
@@ -374,11 +407,11 @@ class Ui_MainWindow(object):
                     x = np.array([ads_profile.H,ads_profile.Hb,ads_profile.S,ads_profile.Sb,ads_profile.J,ads_profile.minads,ads_profile.maxads])
                 ads_profile.run_twosite_optimise(x=x, bounds = bounds)
                 ads_profile.adsorption_plot()
-                output_string = (f"deltaHa = {ads_profile.H: .1f}\n"
-                f"deltaSa = {ads_profile.S :.2f}\n"
-                f"deltaHb = {ads_profile.Hb: .1f}\n"
-                f"deltaSb = {ads_profile.Sb :.2f}\n"
-                f"J = {ads_profile.J :.1f}\n"
+                output_string = (f"deltaHa = {ads_profile.H: .1f} J/mol\n"
+                f"deltaSa = {ads_profile.S :.2f} J/(mol K)\n"
+                f"deltaHb = {ads_profile.Hb: .1f} J/mol\n"
+                f"deltaSb = {ads_profile.Sb :.2f} J/(mol K)\n"
+                f"J = {ads_profile.J :.1f} (J/mol)\n"
                 f"min. ads. = {ads_profile.minads :.3f}\n"
                 f"max. ads = {ads_profile.maxads :.3f}")
 
@@ -391,6 +424,7 @@ class Ui_MainWindow(object):
             self.minadsi = f"{ads_profile.minads :.3f}"
             self.maxadsi = f"{ads_profile.maxads :.3f}"
         elif self.InputType.currentText() == 'Two sites':
+
             ads_profile = adsorptionFitClass.Two_site_adsorption_profile()
             ads_profile.read_file(file = self.InputFile.toPlainText())
             ads_profile.Ha = float(self.deltaHainit.toPlainText())
@@ -398,41 +432,76 @@ class Ui_MainWindow(object):
             ads_profile.Hb = float(self.deltaHbinit.toPlainText())
             ads_profile.Sb = float(self.deltaSbInit.toPlainText())
             ads_profile.Jab = float(self.Jinit.toPlainText())
+            ads_profile.J1 = float(self.J1init.toPlainText())
             ads_profile.minads = float(self.minadsinit.toPlainText())
             ads_profile.maxads = float(self.maxadsinit.toPlainText())
-            if self.MinMaxRefine.currentText() == 'Off':
-                x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab])
-                bounds = ([Halow,Hblow,Salow,Sblow,Jlow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh])
+            if self.ModelType.currentText() == 'Two sites, intra-pore interaction':
+                if self.MinMaxRefine.currentText() == 'Off':
+                    x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab])
+                    bounds = ([Halow,Hblow,Salow,Sblow,Jlow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh])
 
-            elif self.MinMaxRefine.currentText() == 'On':
-                x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab,ads_profile.minads,ads_profile.maxads])
-                bounds = ([Halow,Hblow,Salow,Sblow,Jlow,minadslow,maxadslow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh,minadshigh,maxadshigh])
-            ads_profile.run_optimise(x = x,bounds = bounds)
-            ads_profile.adsorption_plot()
+                elif self.MinMaxRefine.currentText() == 'On':
+                    x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab,ads_profile.minads,ads_profile.maxads])
+                    bounds = ([Halow,Hblow,Salow,Sblow,Jlow,minadslow,maxadslow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh,minadshigh,maxadshigh])
+                ads_profile.run_optimise(x = x,bounds = bounds)
+                ads_profile.adsorption_plot()
 
-            output_string = (f"deltaHa = {ads_profile.Ha: .1f}\n"
-            f"deltaSa = {ads_profile.Sa :.2f}\n"
-            f"deltaHb = {ads_profile.Hb :.1f}\n"
-            f"deltaSb = {ads_profile.Sb :.2f}\n"
-            f"Jab = {ads_profile.Jab :.1f}\n"
-            f"min. ads. = {ads_profile.minads :.3f}\n"
-            f"max. ads = {ads_profile.maxads :.3f}")
-            self.outputLabel.setText(output_string)
-            self.outputLabel.adjustSize()
+                output_string = (f"deltaHa = {ads_profile.Ha: .1f} J/mol\n"
+                f"deltaSa = {ads_profile.Sa :.2f} J/(mol K)\n"
+                f"deltaHb = {ads_profile.Hb :.1f} J/mol\n"
+                f"deltaSb = {ads_profile.Sb :.2f} J/(mol K)\n"
+                f"Jab = {ads_profile.Jab :.1f} J/mol\n"
+                f"min. ads. = {ads_profile.minads :.3f}\n"
+                f"max. ads = {ads_profile.maxads :.3f}")
+                self.outputLabel.setText(output_string)
+                self.outputLabel.adjustSize()
 
-            self.Hai =     f"{ads_profile.Ha :.1f}"
-            self.Hbi =     f"{ads_profile.Hb : .1f}"
-            self.Sai =     f"{ads_profile.Sa : .2f}"
-            self.Sbi =     f"{ads_profile.Sb : .2f}"
-            self.Ji =      f"{ads_profile.Jab :.1f}"
-            self.minadsi = f"{ads_profile.minads :.3f}"
-            self.maxadsi = f"{ads_profile.maxads :.3f}"
+                self.Hai =     f"{ads_profile.Ha :.1f}"
+                self.Hbi =     f"{ads_profile.Hb : .1f}"
+                self.Sai =     f"{ads_profile.Sa : .2f}"
+                self.Sbi =     f"{ads_profile.Sb : .2f}"
+                self.Ji =      f"{ads_profile.Jab :.1f}"
+                self.minadsi = f"{ads_profile.minads :.3f}"
+                self.maxadsi = f"{ads_profile.maxads :.3f}"
+            elif self.ModelType.currentText() == "Two sites, inter-pore interaction":
+                print('two site inter-pore model can take a long time')
+                if self.MinMaxRefine.currentText() == 'Off':
+                    x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab,ads_profile.J1])
+                    bounds = ([Halow,Hblow,Salow,Sblow,Jlow,Jlow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh,Jhigh])
+                elif self.MinMaxRefine.currentText() == 'On':
+                    x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab,ads_profile.J1,ads_profile.minads,ads_profile.maxads])
+                    bounds = ([Halow,Hblow,Salow,Sblow,Jlow,Jlow,minadslow,maxadslow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh,Jhigh,minadshigh,maxadshigh])
+                ads_profile.run_twosite_inter_optimise(x = x,bounds = bounds)
+                ads_profile.adsorption_plot_inter()
+                output_string = (f"deltaHa = {ads_profile.Ha: .1f} J/mol\n"
+                f"deltaSa = {ads_profile.Sa :.2f} J/(mol K)\n"
+                f"deltaHb = {ads_profile.Hb :.1f} J/mol\n"
+                f"deltaSb = {ads_profile.Sb :.2f} J/(mol K)\n"
+                f"Jab = {ads_profile.Jab :.1f} J/mol\n"
+                f"J1 = {ads_profile.J1 :.1f} J/mol\n"
+                f"min. ads. = {ads_profile.minads :.3f}\n"
+                f"max. ads = {ads_profile.maxads :.3f}")
+                self.outputLabel.setText(output_string)
+                self.outputLabel.adjustSize()
+
+                self.Hai =     f"{ads_profile.Ha :.1f}"
+                self.Hbi =     f"{ads_profile.Hb : .1f}"
+                self.Sai =     f"{ads_profile.Sa : .2f}"
+                self.Sbi =     f"{ads_profile.Sb : .2f}"
+                self.Ji =      f"{ads_profile.Jab :.1f}"
+                self.J1i =     f"{ads_profile.J1 :.1f}"
+                self.minadsi = f"{ads_profile.minads :.3f}"
+                self.maxadsi = f"{ads_profile.maxads :.3f}"
+
+
+
     def click_update(self):
         self.deltaHainit.setPlainText(self.Hai)
         self.deltaSaInit.setPlainText(self.Sai)
         self.deltaHbinit.setPlainText(self.Hbi)
         self.deltaSbInit.setPlainText(self.Sbi)
         self.Jinit.setPlainText(self.Ji)
+        self.J1init.setPlainText(self.J1i)
         self.minadsinit.setPlainText(self.minadsi)
         self.maxadsinit.setPlainText(self.maxadsi)
     def open_file(self):
