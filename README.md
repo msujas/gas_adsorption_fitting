@@ -4,4 +4,4 @@ Includes 5 models. To run do "python adsorptionFitGui.py" in terminal, select a 
 (some example files given, can be with one or two sites), select a model, starting values and click Run Optimise. Will plot 
 a fit and print thermodynamic parameters on side.
 
-Uses SciPy to run fits, GUI made with PyQT5.
+Uses SciPy to run fits, GUI made with PyQt5.
