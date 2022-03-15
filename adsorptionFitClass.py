@@ -457,7 +457,7 @@ rw = {rw}
         f.close()
         print('fitted parameters saved to',output_filename)
 
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_intrapore_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads1,self.fit1,self.ads2,self.fit2]).transpose(),
         header = 'T(K) adsorption1 fit1 adsorption2 fit2')
         print('fitted data saved to',fit_filename)
@@ -551,6 +551,15 @@ max. ads. = {self.maxads}
 rw = {rw}
 '''
         print(string)
+        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + 'interpore_fit_pars.txt'
+        f = open(output_filename,'w')
+        f.write(string)
+        f.close()
+
+        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_interpore_ads_fit.txt'
+        np.savetxt(fit_filename,np.array([self.T,self.ads1,self.fit1,self.ads2,self.fit2]).transpose(),
+        header = 'T(K) adsorption1 fit1 adsorption2 fit2')
+        print('fitted data saved to',fit_filename)
         return yopt
 
     def adsorption_plot(self):
