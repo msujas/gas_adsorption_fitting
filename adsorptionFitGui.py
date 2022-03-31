@@ -362,7 +362,11 @@ class Ui_MainWindow(object):
             temperatureunit = 'K'
         if self.InputType.currentText() == 'Single site':
             ads_profile = adsorptionFitClass.One_site_adsorption_profile()
-            ads_profile.read_file(file = self.InputFile.toPlainText(),unit = temperatureunit)
+            try:
+                ads_profile.read_file(file = self.InputFile.toPlainText(),unit = temperatureunit)
+            except:
+                print('couldn\'t read file')
+                return
             ads_profile.H = float(self.deltaHainit.toPlainText())
             ads_profile.S = float(self.deltaSaInit.toPlainText())
             ads_profile.J = float(self.Jinit.toPlainText())
@@ -426,7 +430,11 @@ class Ui_MainWindow(object):
         elif self.InputType.currentText() == 'Two sites':
 
             ads_profile = adsorptionFitClass.Two_site_adsorption_profile()
-            ads_profile.read_file(file = self.InputFile.toPlainText())
+            try:
+                ads_profile.read_file(file = self.InputFile.toPlainText())
+            except:
+                print('could\'t read file')
+                return
             ads_profile.Ha = float(self.deltaHainit.toPlainText())
             ads_profile.Sa = float(self.deltaSaInit.toPlainText())
             ads_profile.Hb = float(self.deltaHbinit.toPlainText())
@@ -464,7 +472,7 @@ class Ui_MainWindow(object):
                 self.minadsi = f"{ads_profile.minads :.3f}"
                 self.maxadsi = f"{ads_profile.maxads :.3f}"
             elif self.ModelType.currentText() == "Two sites, inter-pore interaction":
-                print('two site inter-pore model can take a long time')
+                print('two site inter-pore model can take several minutes')
                 if self.MinMaxRefine.currentText() == 'Off':
                     x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab,ads_profile.J1])
                     bounds = ([Halow,Hblow,Salow,Sblow,Jlow,Jlow],[Hahigh,Hbhigh,Sahigh,Sbhigh,Jhigh,Jhigh])

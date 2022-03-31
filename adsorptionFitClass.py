@@ -1,5 +1,5 @@
 import numpy as np
-import scipy.optimize as optimize
+from scipy.optimize import least_squares
 import matplotlib.pyplot as plt
 import os
 
@@ -26,6 +26,7 @@ class One_site_adsorption_profile:
         uses numpy.loadtxt. Positional arguments: file. Keyword arguments:
         delimiter=None, skiprows=0, usecols=None.
         '''
+
         self.filename = file
         self.directory = os.path.split(file)[0]+'/'
 
@@ -42,13 +43,15 @@ class One_site_adsorption_profile:
                     break
                 except:
                     if i == 19:
-                        print('couldn\'t read data file')
-                        exit()
+                        raise RuntimeError
                     else:
                         continue
+
         else:
+
             self.T,self.ads = np.loadtxt(file,unpack = True, skiprows = skiprows,
             delimiter = delimiter,usecols=usecols)
+
         self.maxads = max(self.ads)*1.1
         if unit == 'C':
             self.T += 273.15
@@ -73,18 +76,18 @@ class One_site_adsorption_profile:
         elif len(x) == 2:
             adsfit = self.one_site_simple(x[0],x[1],self.minads,self.maxads)
         return self.ads - adsfit
-    def run_optimise(self,x = np.array([None]),bounds = ([np.inf]*4,[np.inf]*4),minmaxfix = False):
-        if x.any() == None and minmaxfix == False:
+    def run_optimise(self,x = np.array([None]),bounds = ([np.inf]*4,[np.inf]*4)):
+        if x.any() == None and len(x) == 4:
             x = np.array([self.H,self.S,self.minads,self.maxads])
-        elif x.any() == None and minmaxfix == True:
+        elif x.any() == None and len(x) == 2:
             x = np.array([self.H,self.S])
             bounds = (bounds[0][:2],bounds[1][:2])
 
-        yopt = optimize.least_squares(self.one_site_simple_optimise,x,bounds=bounds)
+        yopt = least_squares(self.one_site_simple_optimise,x,bounds=bounds)
         self.H = yopt['x'][0]
         self.S = yopt['x'][1]
 
-        if minmaxfix == False:
+        if len(yopt['x']) == 4:
             self.minads = yopt['x'][2]
             self.maxads = yopt['x'][3]
         R = 8.31446
@@ -135,7 +138,7 @@ rw = {rw}
         Tfit = self.one_site_coop(Hi,Si,Ji,minadsi,maxadsi)
         return self.T - Tfit
     def run_coop_optimise(self,x,bounds):
-        yopt = optimize.least_squares(self.one_site_coop_optimise,x,bounds = bounds)
+        yopt = least_squares(self.one_site_coop_optimise,x,bounds = bounds)
         params = yopt['x']
         self.H = params[0]
         self.S = params[1]
@@ -153,12 +156,12 @@ min. ads. = {self.minads}
 max. ads. = {self.maxads}
 rw = {rw}'''
         print(output)
-        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_fit_pars.txt'
+        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_1sitecoop_fit_pars.txt'
         f = open(self.directory+output_filename,'w')
         f.write(output)
         f.close()
         print('fitted parameters saved to',output_filename)
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_1sitecoop_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads,self.fit]).transpose(),
         header = 'T(K) adsorption fit')
         print('fitted data saved to',fit_filename)
@@ -205,7 +208,7 @@ rw = {rw}'''
         return self.ads - adsavfit
 
     def run_twosite_optimise(self,x,bounds):
-        yopt = optimize.least_squares(self.twosite_optimise,x,bounds = bounds)
+        yopt = least_squares(self.twosite_optimise,x,bounds = bounds)
         params = yopt['x']
         self.H = params[0]
         self.Hb = params[1]
@@ -408,7 +411,7 @@ class Two_site_adsorption_profile:
 #
         #    bounds = ([-1*np.inf]*len(x),[np.inf]*len(x))
 
-        yopt = optimize.least_squares(self.twosite_nonequiv_optimise,x,
+        yopt = least_squares(self.twosite_nonequiv_optimise,x,
                                    bounds = bounds)
         self.Ha = yopt['x'][0]
         self.Hb = yopt['x'][1]
@@ -421,7 +424,7 @@ class Two_site_adsorption_profile:
             self.minads2 = yopt['x'][5]
             self.maxads2 = yopt['x'][6]
         if len(x) == 9:
-            yopt = optimize.least_squares(self.twosite_nonequiv_minmax2_optimise,initial,
+            yopt = least_squares(self.twosite_nonequiv_minmax2_optimise,initial,
                        bounds = bounds)
             self.minads2 = yopt['x'][7]
             self.maxads2 = yopt['x'][8]
@@ -508,7 +511,7 @@ rw = {rw}
             maxadsi = x[7]
         adsa_guess,adsb_guess = self.twosite_nonequiv(Hai,Hbi,Sai,Sbi,Jabi,minadsi,maxadsi,minadsi,maxadsi)
         initial = np.append(adsa_guess,adsb_guess)
-        yopt_sigma = optimize.least_squares(self.two_site_inter_sigma_solver,initial,args = (Hai,Hbi,Sai,Sbi,Jabi,J1i,minadsi,maxadsi))
+        yopt_sigma = least_squares(self.two_site_inter_sigma_solver,initial,args = (Hai,Hbi,Sai,Sbi,Jabi,J1i,minadsi,maxadsi))
         lenopt_half = int(len(yopt_sigma['x'])/2)
         adsa_fit = yopt_sigma['x'][:lenopt_half]
         adsb_fit = yopt_sigma['x'][lenopt_half:]
@@ -518,7 +521,7 @@ rw = {rw}
 
     def run_twosite_inter_optimise(self,x,bounds):
 
-        yopt = optimize.least_squares(self.two_site_inter_optimise,x,bounds = bounds)
+        yopt = least_squares(self.two_site_inter_optimise,x,bounds = bounds)
 
 
         self.Ha = yopt['x'][0]
@@ -532,7 +535,7 @@ rw = {rw}
             self.maxads = yopt['x'][7]
         adsa_guess,adsb_guess = self.twosite_nonequiv(self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.minads,self.maxads,self.minads,self.maxads)
         initial = np.append(adsa_guess,adsb_guess)
-        yopt_sigma = optimize.least_squares(self.two_site_inter_sigma_solver,initial,args = (self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.J1,self.minads,self.maxads))
+        yopt_sigma = least_squares(self.two_site_inter_sigma_solver,initial,args = (self.Ha,self.Hb,self.Sa,self.Sb,self.Jab,self.J1,self.minads,self.maxads))
         lenopt_half = int(len(yopt_sigma['x'])/2)
         self.adsa_guess = yopt_sigma['x'][:lenopt_half]
         self.adsb_guess = yopt_sigma['x'][lenopt_half:]
@@ -551,7 +554,7 @@ max. ads. = {self.maxads}
 rw = {rw}
 '''
         print(string)
-        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + 'interpore_fit_pars.txt'
+        output_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_interpore_fit_pars.txt'
         f = open(output_filename,'w')
         f.write(string)
         f.close()
