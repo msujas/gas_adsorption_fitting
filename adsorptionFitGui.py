@@ -11,11 +11,18 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 import adsorptionFitClass
 import numpy as np
+import os
 
+class Worker():
+    pass
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Adsorption profile fit")
         MainWindow.resize(800, 585)
+        self.configFileName = 'parameters.log'
+
+
+
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.inputfileLabel = QtWidgets.QLabel(self.centralwidget)
@@ -35,7 +42,7 @@ class Ui_MainWindow(object):
         self.InputFile.setObjectName("InputFile")
         self.InputType = QtWidgets.QComboBox(self.centralwidget)
         self.InputType.setGeometry(QtCore.QRect(50, 110, 171, 22))
-        self.InputType.setEditable(True)
+        self.InputType.setEditable(False)
         self.InputType.setObjectName("InputType")
         self.InputType.addItem("")
         self.InputType.addItem("")
@@ -67,30 +74,30 @@ class Ui_MainWindow(object):
         self.optimiseButton.setGeometry(QtCore.QRect(590, 490, 91, 23))
         self.optimiseButton.setObjectName("optimiseButton")
 
-        self.deltaHainit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaHainit = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaHainit.setGeometry(QtCore.QRect(440, 100, 60, 31))
         self.deltaHainit.setObjectName("deltaHainit")
-        self.deltaSaInit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaSaInit = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaSaInit.setGeometry(QtCore.QRect(440, 140, 60, 31))
         self.deltaSaInit.setObjectName("deltaSaInit")
-        self.deltaHbinit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaHbinit = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaHbinit.setGeometry(QtCore.QRect(440, 180, 60, 31))
         self.deltaHbinit.setObjectName("deltaHbinit")
-        self.deltaSbInit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaSbInit = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaSbInit.setGeometry(QtCore.QRect(440, 220, 60, 31))
         self.deltaSbInit.setObjectName("deltaSbInit")
-        self.Jinit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.Jinit = QtWidgets.QTextEdit(self.centralwidget)
         self.Jinit.setGeometry(QtCore.QRect(440, 260, 60, 31))
         self.Jinit.setObjectName("Jinit")
 
-        self.J1init = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.J1init = QtWidgets.QTextEdit(self.centralwidget)
         self.J1init.setGeometry(QtCore.QRect(440, 300, 60, 31))
         self.J1init.setObjectName("J1init")
 
-        self.minadsinit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.minadsinit = QtWidgets.QTextEdit(self.centralwidget)
         self.minadsinit.setGeometry(QtCore.QRect(440, 340, 60, 31))
         self.minadsinit.setObjectName("minadsinit")
-        self.maxadsinit = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.maxadsinit = QtWidgets.QTextEdit(self.centralwidget)
         self.maxadsinit.setGeometry(QtCore.QRect(440, 380, 60, 31))
         self.maxadsinit.setObjectName("maxadsinit")
         self.deltaHalabel = QtWidgets.QLabel(self.centralwidget)
@@ -133,53 +140,53 @@ class Ui_MainWindow(object):
         self.updateInitialValuesButton = QtWidgets.QPushButton(self.centralwidget)
         self.updateInitialValuesButton.setGeometry(QtCore.QRect(430, 490, 111, 23))
         self.updateInitialValuesButton.setObjectName("updateInitialValuesButton")
-        self.deltaHbLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaHbLowbound = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaHbLowbound.setGeometry(QtCore.QRect(530, 180, 51, 31))
         self.deltaHbLowbound.setObjectName("deltaHbLowbound")
-        self.deltaHaLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaHaLowbound = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaHaLowbound.setGeometry(QtCore.QRect(530, 100, 51, 31))
         self.deltaHaLowbound.setObjectName("deltaHaLowbound")
-        self.deltaSbLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaSbLowbound = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaSbLowbound.setGeometry(QtCore.QRect(530, 220, 51, 31))
         self.deltaSbLowbound.setObjectName("deltaSbLowbound")
-        self.maxadsLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.maxadsLowbound = QtWidgets.QTextEdit(self.centralwidget)
         self.maxadsLowbound.setGeometry(QtCore.QRect(530, 380, 51, 31))
         self.maxadsLowbound.setObjectName("maxadsLowbound")
-        self.deltaSaLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaSaLowbound = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaSaLowbound.setGeometry(QtCore.QRect(530, 140, 51, 31))
         self.deltaSaLowbound.setObjectName("deltaSaLowbound")
-        self.minadsLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.minadsLowbound = QtWidgets.QTextEdit(self.centralwidget)
         self.minadsLowbound.setGeometry(QtCore.QRect(530, 340, 51, 31))
         self.minadsLowbound.setObjectName("minadsLowbound")
-        self.JLowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.JLowbound = QtWidgets.QTextEdit(self.centralwidget)
         self.JLowbound.setGeometry(QtCore.QRect(530, 260, 51, 31))
         self.JLowbound.setObjectName("JLowbound")
 
-        self.J1Lowbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.J1Lowbound = QtWidgets.QTextEdit(self.centralwidget)
         self.J1Lowbound.setGeometry(QtCore.QRect(530, 300, 51, 31))
         self.J1Lowbound.setObjectName("J1Lowbound")
-        self.deltaSbHighBound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaSbHighBound = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaSbHighBound.setGeometry(QtCore.QRect(590, 220, 51, 31))
         self.deltaSbHighBound.setObjectName("deltaSbHighBound")
-        self.JHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.JHighbound = QtWidgets.QTextEdit(self.centralwidget)
         self.JHighbound.setGeometry(QtCore.QRect(590, 260, 51, 31))
         self.JHighbound.setObjectName("JHighbound")
-        self.J1Highbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.J1Highbound = QtWidgets.QTextEdit(self.centralwidget)
         self.J1Highbound.setGeometry(QtCore.QRect(590, 300, 51, 31))
         self.J1Highbound.setObjectName("JHighbound")
-        self.minadsHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.minadsHighbound = QtWidgets.QTextEdit(self.centralwidget)
         self.minadsHighbound.setGeometry(QtCore.QRect(590, 340, 51, 31))
         self.minadsHighbound.setObjectName("minadsHighbound")
-        self.deltaSaHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaSaHighbound = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaSaHighbound.setGeometry(QtCore.QRect(590, 140, 51, 31))
         self.deltaSaHighbound.setObjectName("deltaSaHighbound")
-        self.deltaHbHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaHbHighbound = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaHbHighbound.setGeometry(QtCore.QRect(590, 180, 51, 31))
         self.deltaHbHighbound.setObjectName("deltaHbHighbound")
-        self.deltaHaHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.deltaHaHighbound = QtWidgets.QTextEdit(self.centralwidget)
         self.deltaHaHighbound.setGeometry(QtCore.QRect(590, 100, 51, 31))
         self.deltaHaHighbound.setObjectName("deltaHaHighbound")
-        self.maxadsHighbound = QtWidgets.QPlainTextEdit(self.centralwidget)
+        self.maxadsHighbound = QtWidgets.QTextEdit(self.centralwidget)
         self.maxadsHighbound.setGeometry(QtCore.QRect(590, 380, 51, 31))
         self.maxadsHighbound.setObjectName("maxadsHighbound")
 
@@ -217,14 +224,22 @@ class Ui_MainWindow(object):
         self.menufile.addAction(self.actionopen)
         self.menubar.addAction(self.menufile.menuAction())
 
+        
+        
+        
         self.retranslateUi(MainWindow)
         self.InputType.setCurrentIndex(0)
+        self.updateParamDct()
+        if os.path.exists(self.configFileName):
+            self.readConfig()
+        self.updateConfig()
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         self.InputType.currentTextChanged.connect(self.del_item_in_combobox)
 
         self.optimiseButton.clicked.connect(self.click_optimise)
         self.updateInitialValuesButton.clicked.connect(self.click_update)
         self.actionopen.triggered.connect(self.open_file)
+        
 
     def del_item_in_combobox(self):
         if self.InputType.currentText() == "Two sites":
@@ -355,7 +370,7 @@ class Ui_MainWindow(object):
         minadshigh = float(self.minadsHighbound.toPlainText())
         maxadslow = float(self.maxadsLowbound.toPlainText())
         maxadshigh = float(self.maxadsHighbound.toPlainText())
-
+        self.updateConfig()
         if self.tempUnit.currentText() == '°C':
             temperatureunit = 'C'
         elif self.tempUnit.currentText() == 'K':
@@ -402,6 +417,9 @@ class Ui_MainWindow(object):
                 f"J = {ads_profile.J :.1f} J/mol\n"
                 f"min. ads. = {ads_profile.minads :.3f}\n"
                 f"max. ads = {ads_profile.maxads :.3f}")
+                
+                self.Ji = f'{ads_profile.J:.1f}'
+
             elif self.ModelType.currentText() == 'Two sites, intra-pore interaction':
                 if self.MinMaxRefine.currentText() == 'Off':
                     bounds = ([Halow,Hblow,Salow,Sblow,Jlow],[Hahigh,Hblow,Sahigh,Hbhigh,Jhigh])
@@ -512,6 +530,7 @@ class Ui_MainWindow(object):
         self.J1init.setPlainText(self.J1i)
         self.minadsinit.setPlainText(self.minadsi)
         self.maxadsinit.setPlainText(self.maxadsi)
+        self.updateConfig()
     def open_file(self):
 
         #dialog.setFileMode(QtWidgets.QFileDialog.AnyFile)
@@ -520,6 +539,58 @@ class Ui_MainWindow(object):
         filter = filter)
 
         self.InputFile.setText(dialog[0])
+    
+    def updateParamDct(self):
+        self.paramDct = {self.deltaHainit: [self.deltaHainit.objectName(),self.deltaHainit.toPlainText()],
+                         self.deltaSaInit: [self.deltaSaInit.objectName(),self.deltaSaInit.toPlainText()],
+                         self.deltaHbinit: [self.deltaHbinit.objectName(), self. deltaHbinit.toPlainText()],
+                         self.deltaSbInit: [self.deltaSbInit.objectName(), self.deltaSbInit.toPlainText()],
+                         self.Jinit: [self.Jinit.objectName(), self.Jinit.toPlainText()],
+                         self.J1init: [self.J1init.objectName(),self.J1init.toPlainText()],
+                         self.minadsinit: [self.minadsinit.objectName(), self.minadsinit.toPlainText()],
+                         self.maxadsinit: [self.maxadsinit.objectName(), self.maxadsinit.toPlainText()],
+                         self.InputFile: [self.InputFile.objectName(),self.InputFile.toPlainText()],
+                         self.InputType: [self.InputType.objectName(), self.InputType.currentIndex()],
+                         self.MinMaxRefine: [self.MinMaxRefine.objectName(), self.MinMaxRefine.currentIndex()],
+                         self.tempUnit: [self.tempUnit.objectName(), self.tempUnit.currentIndex()],
+                         self.minadsLowbound: [self.minadsLowbound.objectName(),self.minadsLowbound.toPlainText()],
+                         self.minadsHighbound: [self.minadsHighbound.objectName(), self.minadsHighbound.toPlainText()],
+                         self.maxadsLowbound:[self.maxadsLowbound.objectName(), self.maxadsLowbound.toPlainText()],
+                         self.deltaHaLowbound: [self.deltaHaLowbound.objectName(), self.deltaHaLowbound.toPlainText()],
+                         self.deltaHaHighbound: [self.deltaHaHighbound.objectName(), self.deltaHaHighbound.toPlainText()],
+                         self.deltaSaLowbound: [self.deltaSaLowbound.objectName(), self.deltaSaLowbound.toPlainText()],
+                         self.deltaSaHighbound: [self.deltaSaHighbound.objectName(), self.deltaSbHighBound.toPlainText()],
+                         self.deltaHbLowbound: [self.deltaHbLowbound.objectName(), self.deltaHbLowbound.toPlainText()],
+                         self.deltaSbLowbound: [self.deltaSbLowbound.objectName(), self.deltaSbLowbound.toPlainText()],
+                         self.JLowbound: [self.JLowbound.objectName(), self.JLowbound.toPlainText()],
+                         self.JHighbound: [self.JHighbound.objectName(), self.JHighbound.toPlainText()],
+                         self.J1Lowbound: [self.J1Lowbound.objectName(), self.J1Lowbound.toPlainText()],
+                         self.J1Highbound: [self.J1Highbound.objectName(), self.J1Highbound.toPlainText()],
+                         self.ModelType: [self.ModelType.objectName(), self.ModelType.currentIndex()]}
+    def updateConfig(self):
+        self.updateParamDct()
+        string = ''
+        for item in self.paramDct:
+            string += f'{self.paramDct[item][0]};{self.paramDct[item][1]}\n'
+        f = open(self.configFileName,'w')
+        f.write(string)
+        f.close()
+    def readConfig(self):
+        f = open(self.configFileName,'r')
+        lines = f.readlines()
+        f.close()
+        for line in lines:
+            lsplit = line.split(';')
+            name = lsplit[0]
+            value = lsplit[1].replace('\n','')
+            for item in self.paramDct:
+                if name == self.paramDct[item][0]:
+                    if type(item) == QtWidgets.QComboBox:
+                        item.setCurrentIndex(int(value))
+                    elif type(item) == QtWidgets.QTextEdit:
+                        item.setText(value)
+                    
+        
 if __name__ == "__main__":
     import sys
     app = QtWidgets.QApplication(sys.argv)
