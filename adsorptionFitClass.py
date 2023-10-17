@@ -110,7 +110,7 @@ rw = {rw}
         self.update_values()
         self.Keq = self.gamma/(1-self.gamma)
         self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads,self.fit]).transpose(),
         header = 'T(K) adsorption fit')
         print('fitted data saved to',fit_filename)
@@ -162,7 +162,7 @@ rw = {rw}'''
         f.write(output)
         f.close()
         print('fitted parameters saved to',output_filename)
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_1sitecoop_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_1sitecoop_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads,self.fit]).transpose(),
         header = 'T(K) adsorption fit')
         print('fitted data saved to',fit_filename)
@@ -236,12 +236,13 @@ rw = {rw}'''
         f.write(string)
         f.close()
         print('fitted parameters saved to',output_filename)
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads,self.fit]).transpose(),
         header = 'T(K) adsorption fit')
         print('fitted data saved to',fit_filename)
         return yopt
     def adsorption_plot(self):
+        plt.cla()
         plt.plot(self.T,self.ads,'o',label = 'adsorption')
         plt.plot(self.T,self.fit, label = 'fit')
         plt.xlim(min(self.T),max(self.T))
@@ -250,6 +251,7 @@ rw = {rw}'''
         plt.legend()
         plt.show()
     def vant_hoff_plot(self):
+        plt.cla()
         plt.plot(1/self.T,np.log(self.Keq),'o',label = 'measured (min. max. normalised)')
         plt.plot(1/self.T,np.log(self.Keq_fit),label = 'fit')
         plt.xlim(min(1/self.T),max(1/self.T))
@@ -259,6 +261,8 @@ rw = {rw}'''
         plt.show()
     def ads_vant_hoff_plot(self):
         fig, (ax1,ax2) = plt.subplots(2,1)
+        ax1.cla()
+        ax2.cla()
         ax1.plot(self.T,self.ads,'o',label = 'adsorption')
         ax1.plot(self.T,self.fit, label = 'fit')
         ax1.set_xlim(min(self.T),max(self.T))
@@ -461,7 +465,7 @@ rw = {rw}
         f.close()
         print('fitted parameters saved to',output_filename)
 
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_intrapore_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_intrapore_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads1,self.fit1,self.ads2,self.fit2]).transpose(),
         header = 'T(K) adsorption1 fit1 adsorption2 fit2')
         print('fitted data saved to',fit_filename)
@@ -560,7 +564,7 @@ rw = {rw}
         f.write(string)
         f.close()
 
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_interpore_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_interpore_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads1,self.fit1,self.ads2,self.fit2]).transpose(),
         header = 'T(K) adsorption1 fit1 adsorption2 fit2')
         print('fitted data saved to',fit_filename)
@@ -714,7 +718,7 @@ rw = {rw}
         self.update_values()
         self.Keq = self.gamma/(1-self.gamma)
         self.Keq_fit = np.exp(-self.H/(R*self.T) + self.S/R)
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads[1],self.fit]).transpose(),
         header = 'T(K) adsorption fit')
         print('fitted data saved to',fit_filename)
@@ -766,7 +770,7 @@ rw = {rw}'''
         f.write(output)
         f.close()
         print('fitted parameters saved to',output_filename)
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_1sitecoop_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_1sitecoop_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads[1],self.fit]).transpose(),
         header = 'T(K) adsorption fit')
         print('fitted data saved to',fit_filename)
@@ -840,7 +844,7 @@ rw = {rw}'''
         f.write(string)
         f.close()
         print('fitted parameters saved to',output_filename)
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads[1],self.fit]).transpose(),
         header = 'T(K) adsorption fit')
         print('fitted data saved to',fit_filename)
@@ -1003,7 +1007,7 @@ rw = {rw}
         f.close()
         print('fitted parameters saved to',output_filename)
 
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_intrapore_ads_fit.txt'
+        fit_filename = self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_intrapore_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads[1],self.fit1,self.ads[2],self.fit2]).transpose(),
         header = 'T(K) adsorption1 fit1 adsorption2 fit2')
         print('fitted data saved to',fit_filename)
@@ -1102,7 +1106,7 @@ rw = {rw}
         f.write(string)
         f.close()
 
-        fit_filename = os.path.splitext(os.path.split(self.filename)[-1])[0] + '_interpore_ads_fit.txt'
+        fit_filename = self.directory + self.directory + os.path.splitext(os.path.split(self.filename)[-1])[0] + '_interpore_ads_fit.txt'
         np.savetxt(fit_filename,np.array([self.T,self.ads[1],self.fit1,self.ads[2],self.fit2]).transpose(),
         header = 'T(K) adsorption1 fit1 adsorption2 fit2')
         print('fitted data saved to',fit_filename)
