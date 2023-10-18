@@ -13,8 +13,7 @@ import adsorptionFitClass
 import numpy as np
 import os
 
-class Worker():
-    pass
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Adsorption profile fit")
@@ -26,7 +25,7 @@ class Ui_MainWindow(object):
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.inputfileLabel = QtWidgets.QLabel(self.centralwidget)
-        self.inputfileLabel.setGeometry(QtCore.QRect(500, 30, 61, 21))
+        self.inputfileLabel.setGeometry(QtCore.QRect(530, 30, 61, 21))
         self.inputfileLabel.setObjectName("inputfileLabel")
         self.outputLabel = QtWidgets.QLabel(self.centralwidget)
         self.outputLabel.setGeometry(QtCore.QRect(50, 350, 121, 181))
@@ -37,9 +36,17 @@ class Ui_MainWindow(object):
         self.scipylabel = QtWidgets.QLabel(self.centralwidget)
         self.scipylabel.setGeometry(QtCore.QRect(250, 500, 150, 60))
         self.scipylabel.setObjectName("scipylabel")
+
         self.InputFile = QtWidgets.QTextEdit(self.centralwidget)
-        self.InputFile.setGeometry(QtCore.QRect(20, 30, 471, 21))
+        self.InputFile.setGeometry(QtCore.QRect(20, 30, 471, 25))
         self.InputFile.setObjectName("InputFile")
+        self.InputFile.setEnabled(False)
+        
+        self.inputFileButton = QtWidgets.QPushButton(self.centralwidget)
+        self.inputFileButton.setObjectName('inputFileButton')
+        self.inputFileButton.setGeometry(500,30,20,20)
+        self.inputFileButton.setText('...')
+
         self.InputType = QtWidgets.QComboBox(self.centralwidget)
         self.InputType.setGeometry(QtCore.QRect(50, 110, 171, 22))
         self.InputType.setEditable(False)
@@ -239,6 +246,7 @@ class Ui_MainWindow(object):
         self.optimiseButton.clicked.connect(self.click_optimise)
         self.updateInitialValuesButton.clicked.connect(self.click_update)
         self.actionopen.triggered.connect(self.open_file)
+        self.inputFileButton.clicked.connect(self.open_file)
         
 
     def del_item_in_combobox(self):
@@ -535,10 +543,15 @@ class Ui_MainWindow(object):
 
         #dialog.setFileMode(QtWidgets.QFileDialog.AnyFile)
         filter = "data file (*.txt *.dat *.xy *.xye *csv)"
+        if os.path.dirname(self.InputFile.toPlainText()) == '':
+            direc = os.path.dirname(os.path.realpath(__file__))
+        else:
+            direc = os.path.dirname(self.InputFile.toPlainText())
         dialog = QtWidgets.QFileDialog.getOpenFileName(caption = 'select data file',
-        filter = filter)
-
-        self.InputFile.setText(dialog[0])
+        filter = filter,directory = direc)
+        if dialog[0] != '':
+            self.InputFile.setText(dialog[0])
+        self.updateConfig()
     
     def updateParamDct(self):
         self.paramDct = {self.deltaHainit: [self.deltaHainit.objectName(),self.deltaHainit.toPlainText()],

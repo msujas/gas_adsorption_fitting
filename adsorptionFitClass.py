@@ -139,7 +139,13 @@ rw = {rw}
         Tfit = self.one_site_coop(Hi,Si,Ji,minadsi,maxadsi)
         return self.T - Tfit
     def run_coop_optimise(self,x,bounds):
-        yopt = least_squares(self.one_site_coop_optimise,x,bounds = bounds)
+        try:
+            yopt = least_squares(self.one_site_coop_optimise,x,bounds = bounds)
+        except ValueError as e:
+            if 'Residuals are not finite in the initial point' in str(e):
+                print(e)
+                print('try chaging starting parameters (probably min. and max. adsorptions)')
+                return
         params = yopt['x']
         self.H = params[0]
         self.S = params[1]
@@ -242,6 +248,7 @@ rw = {rw}'''
         print('fitted data saved to',fit_filename)
         return yopt
     def adsorption_plot(self):
+        plt.figure(dpi = 150)
         plt.cla()
         plt.plot(self.T,self.ads,'o',label = 'adsorption')
         plt.plot(self.T,self.fit, label = 'fit')
@@ -249,8 +256,10 @@ rw = {rw}'''
         plt.xlabel('Temperature (K)')
         plt.ylabel('Adsorption')
         plt.legend()
+        plt.tight_layout()
         plt.show()
     def vant_hoff_plot(self):
+        plt.figure(dpi = 150)
         plt.cla()
         plt.plot(1/self.T,np.log(self.Keq),'o',label = 'measured (min. max. normalised)')
         plt.plot(1/self.T,np.log(self.Keq_fit),label = 'fit')
@@ -258,9 +267,10 @@ rw = {rw}'''
         plt.xlabel('1/T (K$^{-1}$)')
         plt.ylabel('ln(K)')
         plt.legend()
+        plt.tight_layout()
         plt.show()
     def ads_vant_hoff_plot(self):
-        fig, (ax1,ax2) = plt.subplots(2,1)
+        fig, (ax1,ax2) = plt.subplots(2,1, dpi = 150)
         ax1.cla()
         ax2.cla()
         ax1.plot(self.T,self.ads,'o',label = 'adsorption')
@@ -275,15 +285,19 @@ rw = {rw}'''
         ax2.set_xlabel('1/T (K$^{-1}$)')
         ax2.set_ylabel('ln(K)')
         ax2.legend()
+        plt.tight_layout()
         plt.show()
 
     def one_site_coop_plot(self):
+        plt.figure(dpi =150)
+        plt.cla()
         plt.plot(self.T,self.ads,'o',label = 'adsorption')
         plt.plot(self.fit,self.ads,label = 'fit')
         plt.xlabel('Temperature (K)')
         plt.ylabel('adsorption')
         plt.xlim(min(self.T),max(self.T))
         plt.legend()
+        plt.tight_layout()
         plt.show()
 
 
