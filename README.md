@@ -7,9 +7,11 @@ and print thermodynamic parameters on side. The Update initial values button wil
 Uses SciPy to run fits, GUI made with PyQt5.
 
 The GUI
+
 ![image](https://github.com/msujas/gas_adsorption_fitting/assets/79653376/f0efb3e6-f14b-475a-a478-2ae43956dca0)
 
 Single-site, simple fit
+
 ![image](https://github.com/msujas/gas_adsorption_fitting/assets/79653376/9a123e8a-9913-48f1-becc-c4b0a29c3e4f)
 
 
