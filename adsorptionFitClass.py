@@ -83,8 +83,17 @@ class One_site_adsorption_profile:
         elif x.any() == None and len(x) == 2:
             x = np.array([self.H,self.S])
             bounds = (bounds[0][:2],bounds[1][:2])
-
-        yopt = least_squares(self.one_site_simple_optimise,x,bounds=bounds)
+        try:
+            yopt = least_squares(self.one_site_simple_optimise,x,bounds=bounds)
+        except ValueError as e:
+            if 'Residuals are not finite in the initial point' in str(e):
+                print(e)
+                print('try chaging starting parameters (probably min. and max. adsorptions)')
+                return
+            elif 'infeasible' in str(e):
+                print(e)
+                print('an initial value is probably outside the boundary condition,\ntry changin bounds')
+                return
         self.H = yopt['x'][0]
         self.S = yopt['x'][1]
 
@@ -146,6 +155,11 @@ rw = {rw}
                 print(e)
                 print('try chaging starting parameters (probably min. and max. adsorptions)')
                 return
+            elif 'infeasible' in str(e):
+                print(e)
+                print('an initial value is probably outside the boundary condition,\ntry changin bounds')
+                return
+
         params = yopt['x']
         self.H = params[0]
         self.S = params[1]
