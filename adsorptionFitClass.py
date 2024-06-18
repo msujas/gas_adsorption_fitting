@@ -457,7 +457,7 @@ class Two_site_adsorption_profile:
             self.minads2 = yopt['x'][5]
             self.maxads2 = yopt['x'][6]
         if len(x) == 9:
-            yopt = least_squares(self.twosite_nonequiv_minmax2_optimise,initial,
+            yopt = least_squares(self.twosite_nonequiv_minmax2_optimise,x,
                        bounds = bounds)
             self.minads2 = yopt['x'][7]
             self.maxads2 = yopt['x'][8]
@@ -655,7 +655,7 @@ class AdsorptionProfile:
     def update_values(self):
         self.values = np.array([self.H,self.S,self.J,self.minads,self.maxads])
         self.gamma = (self.ads[0] - self.minads)/(self.maxads-self.minads)
-    def read_file(self,file,delimiter=None,skiprows = None,unit = 'K'):
+    def read_file(self,file,delimiter=None,skiprows = None,unit = 'K', usecols = None):
         '''
         uses numpy.loadtxt. Positional arguments: file. Keyword arguments:
         delimiter=None, skiprows=0, usecols=None.
@@ -999,7 +999,7 @@ rw = {rw}'''
             self.minads2 = yopt['x'][5]
             self.maxads2 = yopt['x'][6]
         if len(x) == 9:
-            yopt = least_squares(self.twosite_nonequiv_minmax2_optimise,initial,
+            yopt = least_squares(self.twosite_nonequiv_minmax2_optimise,x,
                        bounds = bounds)
             self.minads2 = yopt['x'][7]
             self.maxads2 = yopt['x'][8]

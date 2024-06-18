@@ -12,7 +12,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import adsorptionFitClass
 import numpy as np
 import os
-
+import sys
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -440,6 +440,9 @@ class Ui_MainWindow(object):
                 f"J = {ads_profile.J :.1f} (J/mol)\n"
                 f"min. ads. = {ads_profile.minads :.3f}\n"
                 f"max. ads = {ads_profile.maxads :.3f}")
+                self.Hbi = f"{ads_profile.Hb :.1f}"
+                self.Sbi = f'{ads_profile.Sb :.2f}'
+                self.Ji = f'{ads_profile.J :.1f}'
 
 
             self.outputLabel.setText(output_string)
@@ -599,12 +602,13 @@ class Ui_MainWindow(object):
                     elif type(item) == QtWidgets.QTextEdit:
                         item.setText(value)
                     
-        
-if __name__ == "__main__":
-    import sys
+def main():
     app = QtWidgets.QApplication(sys.argv)
     MainWindow = QtWidgets.QMainWindow()
     ui = Ui_MainWindow()
     ui.setupUi(MainWindow)
     MainWindow.show()
     sys.exit(app.exec_())
+if __name__ == "__main__":
+    main()
+
