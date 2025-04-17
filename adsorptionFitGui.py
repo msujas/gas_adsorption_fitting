@@ -14,13 +14,22 @@ import numpy as np
 import os
 import sys
 
+
+class Worker(QtCore.QThread):
+    def __init__(self):
+        super(Worker,self).__init__()
+    def run(self):
+        pass
+    def stop(self):
+        self.terminate()
+
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Adsorption profile fit")
         MainWindow.resize(800, 585)
         self.configFileName = 'parameters.log'
 
-
+        
 
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
@@ -37,7 +46,7 @@ class Ui_MainWindow(object):
         self.scipylabel.setGeometry(QtCore.QRect(250, 500, 150, 60))
         self.scipylabel.setObjectName("scipylabel")
 
-        self.InputFile = QtWidgets.QTextEdit(self.centralwidget)
+        self.InputFile = QtWidgets.QLineEdit(self.centralwidget)
         self.InputFile.setGeometry(QtCore.QRect(20, 30, 471, 25))
         self.InputFile.setObjectName("InputFile")
         self.InputFile.setEnabled(False)
@@ -81,35 +90,86 @@ class Ui_MainWindow(object):
         self.optimiseButton.setGeometry(QtCore.QRect(590, 490, 91, 23))
         self.optimiseButton.setObjectName("optimiseButton")
 
-        self.deltaHainit = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaHainit = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.deltaHainit.setGeometry(QtCore.QRect(440, 100, 60, 31))
         self.deltaHainit.setObjectName("deltaHainit")
-        self.deltaSaInit = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaHainit.setMaximum(10**6)
+        self.deltaHainit.setMinimum(-10**6)
+        self.deltaHainit.adjustSize()
+
+        self.deltaSaInit = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.deltaSaInit.setGeometry(QtCore.QRect(440, 140, 60, 31))
         self.deltaSaInit.setObjectName("deltaSaInit")
-        self.deltaHbinit = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaSaInit.setMinimum(-10**5)
+        self.deltaSaInit.setMaximum(10**5)
+        self.deltaSaInit.adjustSize()
+
+        self.deltaHbinit = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.deltaHbinit.setGeometry(QtCore.QRect(440, 180, 60, 31))
         self.deltaHbinit.setObjectName("deltaHbinit")
-        self.deltaSbInit = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaHbinit.setMaximum(10**5)
+        self.deltaHbinit.setMinimum(-10**5)
+        self.deltaHbinit.adjustSize()
+
+        self.deltaSbInit = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.deltaSbInit.setGeometry(QtCore.QRect(440, 220, 60, 31))
         self.deltaSbInit.setObjectName("deltaSbInit")
-        self.Jinit = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaSbInit.setMaximum(10**5)
+        self.deltaSbInit.setMinimum(-10**5)
+        self.deltaSbInit.adjustSize()
+
+        self.Jinit = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.Jinit.setGeometry(QtCore.QRect(440, 260, 60, 31))
         self.Jinit.setObjectName("Jinit")
+        self.Jinit.setMinimum(-10**5)
+        self.Jinit.setMaximum(10**5)
+        self.Jinit.adjustSize()
 
-        self.J1init = QtWidgets.QTextEdit(self.centralwidget)
+        self.J1init = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.J1init.setGeometry(QtCore.QRect(440, 300, 60, 31))
         self.J1init.setObjectName("J1init")
+        self.J1init.setMinimum(-10**5)
+        self.J1init.setMaximum(10**5)
+        self.J1init.adjustSize()
 
-        self.minadsinit = QtWidgets.QTextEdit(self.centralwidget)
+
+
+        self.minadsinit = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.minadsinit.setGeometry(QtCore.QRect(440, 340, 60, 31))
         self.minadsinit.setObjectName("minadsinit")
-        self.maxadsinit = QtWidgets.QTextEdit(self.centralwidget)
+        self.minadsinit.setMinimum(-10)
+        self.minadsinit.setMaximum(10**5)
+        self.minadsinit.adjustSize()
+
+        self.maxadsinit = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.maxadsinit.setGeometry(QtCore.QRect(440, 380, 60, 31))
         self.maxadsinit.setObjectName("maxadsinit")
+        self.maxadsinit.setMinimum(-10)
+        self.maxadsinit.setMaximum(10**5)
+        self.maxadsinit.adjustSize()
+
+        self.Hai = -5000
+        self.Hbi = -5000
+        self.Sai = -50
+        self.Sbi = -50
+        self.Ji = 0
+        self.J1i = 0
+        self.minadsi = 0
+        self.maxadsi = 1
+
+        self.deltaHainit.setValue( self.Hai)
+        self.deltaSaInit.setValue( self.Sai)
+        self.deltaHbinit.setValue( self.Hbi)
+        self.deltaSbInit.setValue( self.Sbi)
+        self.Jinit.setValue( self.Ji)
+        self.J1init.setValue( self.J1i)
+        self.minadsinit.setValue( self.minadsi)
+        self.maxadsinit.setValue( self.maxadsi)
+
         self.deltaHalabel = QtWidgets.QLabel(self.centralwidget)
-        self.deltaHalabel.setGeometry(QtCore.QRect(380, 110, 47, 13))
+        self.deltaHalabel.setGeometry(QtCore.QRect(380, 105, 47, 13))
         self.deltaHalabel.setObjectName("deltaHalabel")
+
         self.initialvalueslabel = QtWidgets.QLabel(self.centralwidget)
         self.initialvalueslabel.setGeometry(QtCore.QRect(380, 70, 121, 16))
         font = QtGui.QFont()
@@ -117,85 +177,165 @@ class Ui_MainWindow(object):
         self.initialvalueslabel.setFont(font)
         self.initialvalueslabel.setObjectName("initialvalueslabel")
         self.deltaSalabel = QtWidgets.QLabel(self.centralwidget)
-        self.deltaSalabel.setGeometry(QtCore.QRect(380, 150, 47, 13))
+        self.deltaSalabel.setGeometry(QtCore.QRect(380, 145, 47, 13))
         self.deltaSalabel.setObjectName("deltaSalabel")
         self.deltaHblabel = QtWidgets.QLabel(self.centralwidget)
-        self.deltaHblabel.setGeometry(QtCore.QRect(380, 190, 47, 13))
+        self.deltaHblabel.setGeometry(QtCore.QRect(380, 185, 47, 13))
         self.deltaHblabel.setObjectName("deltaHblabel")
         self.deltaSblabel = QtWidgets.QLabel(self.centralwidget)
-        self.deltaSblabel.setGeometry(QtCore.QRect(380, 230, 47, 13))
+        self.deltaSblabel.setGeometry(QtCore.QRect(380, 225, 47, 13))
         self.deltaSblabel.setObjectName("deltaSblabel")
         self.Jlabel = QtWidgets.QLabel(self.centralwidget)
-        self.Jlabel.setGeometry(QtCore.QRect(400, 270, 21, 16))
+        self.Jlabel.setGeometry(QtCore.QRect(400, 265, 21, 16))
         self.Jlabel.setObjectName("Jlabel")
         self.J1label = QtWidgets.QLabel(self.centralwidget)
-        self.J1label.setGeometry(QtCore.QRect(400, 310, 21, 16))
+        self.J1label.setGeometry(QtCore.QRect(400, 305, 21, 16))
         self.J1label.setObjectName("J1label")
         self.Jlabel.setObjectName("Jlabel")
 
         self.J1description = QtWidgets.QLabel(self.centralwidget)
-        self.J1description.setGeometry(QtCore.QRect(650, 293, 80, 45))
+        self.J1description.setGeometry(QtCore.QRect(700, 285, 80, 45))
         self.J1description.setObjectName("J1description")
 
         self.minadslabel = QtWidgets.QLabel(self.centralwidget)
-        self.minadslabel.setGeometry(QtCore.QRect(380, 350, 47, 13))
+        self.minadslabel.setGeometry(QtCore.QRect(380, 345, 47, 13))
         self.minadslabel.setObjectName("minadslabel")
         self.maxadslabel = QtWidgets.QLabel(self.centralwidget)
-        self.maxadslabel.setGeometry(QtCore.QRect(380, 390, 47, 13))
+        self.maxadslabel.setGeometry(QtCore.QRect(380, 385, 47, 13))
         self.maxadslabel.setObjectName("maxadslabel")
 
         self.updateInitialValuesButton = QtWidgets.QPushButton(self.centralwidget)
         self.updateInitialValuesButton.setGeometry(QtCore.QRect(430, 490, 111, 23))
         self.updateInitialValuesButton.setObjectName("updateInitialValuesButton")
-        self.deltaHbLowbound = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaHbLowbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.deltaHbLowbound.setGeometry(QtCore.QRect(530, 180, 51, 31))
         self.deltaHbLowbound.setObjectName("deltaHbLowbound")
-        self.deltaHaLowbound = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaHbLowbound.setMinimum(-10**6)
+        self.deltaHbLowbound.setMaximum(10**6)
+        self.deltaHbLowbound.adjustSize()
+
+        self.deltaHaLowbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.deltaHaLowbound.setGeometry(QtCore.QRect(530, 100, 51, 31))
         self.deltaHaLowbound.setObjectName("deltaHaLowbound")
-        self.deltaSbLowbound = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaHaLowbound.setMinimum(-10**6)
+        self.deltaHaLowbound.setMaximum(10**6)
+        self.deltaHaLowbound.adjustSize()
+
+        self.deltaSbLowbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.deltaSbLowbound.setGeometry(QtCore.QRect(530, 220, 51, 31))
         self.deltaSbLowbound.setObjectName("deltaSbLowbound")
-        self.maxadsLowbound = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaSbLowbound.setMinimum(-10**5)
+        self.deltaSbLowbound.setMaximum(10**5)
+        self.deltaSbLowbound.adjustSize()
+
+        self.maxadsLowbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.maxadsLowbound.setGeometry(QtCore.QRect(530, 380, 51, 31))
         self.maxadsLowbound.setObjectName("maxadsLowbound")
-        self.deltaSaLowbound = QtWidgets.QTextEdit(self.centralwidget)
+        self.maxadsLowbound.setMinimum(0)
+        self.maxadsLowbound.setMaximum(10**5)
+        self.maxadsLowbound.adjustSize()
+
+        self.deltaSaLowbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.deltaSaLowbound.setGeometry(QtCore.QRect(530, 140, 51, 31))
         self.deltaSaLowbound.setObjectName("deltaSaLowbound")
-        self.minadsLowbound = QtWidgets.QTextEdit(self.centralwidget)
+        self.deltaSaLowbound.setMinimum(-10**5)
+        self.deltaSaLowbound.setMaximum(10**5)
+        self.deltaSaLowbound.adjustSize()
+
+        self.minadsLowbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.minadsLowbound.setGeometry(QtCore.QRect(530, 340, 51, 31))
         self.minadsLowbound.setObjectName("minadsLowbound")
-        self.JLowbound = QtWidgets.QTextEdit(self.centralwidget)
+        self.minadsLowbound.setMinimum(-10)
+        self.minadsLowbound.setMaximum(10**5)
+        self.minadsLowbound.adjustSize()
+
+        self.JLowbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.JLowbound.setGeometry(QtCore.QRect(530, 260, 51, 31))
         self.JLowbound.setObjectName("JLowbound")
+        self.JLowbound.setMinimum(-10**5)
+        self.JLowbound.setMaximum(10**5)
+        self.JLowbound.adjustSize()
 
-        self.J1Lowbound = QtWidgets.QTextEdit(self.centralwidget)
+        self.J1Lowbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
         self.J1Lowbound.setGeometry(QtCore.QRect(530, 300, 51, 31))
         self.J1Lowbound.setObjectName("J1Lowbound")
-        self.deltaSbHighBound = QtWidgets.QTextEdit(self.centralwidget)
-        self.deltaSbHighBound.setGeometry(QtCore.QRect(590, 220, 51, 31))
+        self.J1Lowbound.setMinimum(-10**5)
+        self.J1Lowbound.setMaximum(10**5)
+        self.J1Lowbound.adjustSize()
+
+        self.deltaSbHighBound = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.deltaSbHighBound.setGeometry(QtCore.QRect(620, 220, 51, 31))
         self.deltaSbHighBound.setObjectName("deltaSbHighBound")
-        self.JHighbound = QtWidgets.QTextEdit(self.centralwidget)
-        self.JHighbound.setGeometry(QtCore.QRect(590, 260, 51, 31))
+        self.deltaSbHighBound.setMinimum(-10**5)
+        self.deltaSbHighBound.setMaximum(10**5)
+        self.deltaSbHighBound.adjustSize()
+
+        self.JHighbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.JHighbound.setGeometry(QtCore.QRect(620, 260, 51, 31))
         self.JHighbound.setObjectName("JHighbound")
-        self.J1Highbound = QtWidgets.QTextEdit(self.centralwidget)
-        self.J1Highbound.setGeometry(QtCore.QRect(590, 300, 51, 31))
+        self.JHighbound.setMinimum(-10**5)
+        self.JHighbound.setMaximum(10**5)
+        self.JHighbound.adjustSize()
+        
+        self.J1Highbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.J1Highbound.setGeometry(QtCore.QRect(620, 300, 51, 31))
         self.J1Highbound.setObjectName("JHighbound")
-        self.minadsHighbound = QtWidgets.QTextEdit(self.centralwidget)
-        self.minadsHighbound.setGeometry(QtCore.QRect(590, 340, 51, 31))
+        self.J1Highbound.setMinimum(-10**5)
+        self.J1Highbound.setMaximum(10**5)
+        self.J1Highbound.adjustSize()
+
+        self.minadsHighbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.minadsHighbound.setGeometry(QtCore.QRect(620, 340, 51, 31))
         self.minadsHighbound.setObjectName("minadsHighbound")
-        self.deltaSaHighbound = QtWidgets.QTextEdit(self.centralwidget)
-        self.deltaSaHighbound.setGeometry(QtCore.QRect(590, 140, 51, 31))
+        self.minadsHighbound.setMinimum(0)
+        self.minadsHighbound.setMaximum(10**5)
+        self.minadsHighbound.adjustSize()
+
+        self.deltaSaHighbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.deltaSaHighbound.setGeometry(QtCore.QRect(620, 140, 51, 31))
         self.deltaSaHighbound.setObjectName("deltaSaHighbound")
-        self.deltaHbHighbound = QtWidgets.QTextEdit(self.centralwidget)
-        self.deltaHbHighbound.setGeometry(QtCore.QRect(590, 180, 51, 31))
+        self.deltaSaHighbound.setMinimum(-10**5)
+        self.deltaSaHighbound.setMaximum(10**5)
+        self.deltaSaHighbound.adjustSize()
+
+        self.deltaHbHighbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.deltaHbHighbound.setGeometry(QtCore.QRect(620, 180, 51, 31))
         self.deltaHbHighbound.setObjectName("deltaHbHighbound")
-        self.deltaHaHighbound = QtWidgets.QTextEdit(self.centralwidget)
-        self.deltaHaHighbound.setGeometry(QtCore.QRect(590, 100, 51, 31))
+        self.deltaHbHighbound.setMinimum(-10**6)
+        self.deltaHbHighbound.setMaximum(10**6)
+        self.deltaHbHighbound.adjustSize()
+
+        self.deltaHaHighbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.deltaHaHighbound.setGeometry(QtCore.QRect(620, 100, 51, 31))
         self.deltaHaHighbound.setObjectName("deltaHaHighbound")
-        self.maxadsHighbound = QtWidgets.QTextEdit(self.centralwidget)
-        self.maxadsHighbound.setGeometry(QtCore.QRect(590, 380, 51, 31))
+        self.deltaHaHighbound.setMinimum(-10**6)
+        self.deltaHaHighbound.setMaximum(10**6)
+        self.deltaHaHighbound.adjustSize()
+
+        self.maxadsHighbound = QtWidgets.QDoubleSpinBox(self.centralwidget)
+        self.maxadsHighbound.setGeometry(QtCore.QRect(620, 380, 51, 31))
         self.maxadsHighbound.setObjectName("maxadsHighbound")
+        self.maxadsHighbound.setMinimum(0)
+        self.maxadsHighbound.setMaximum(10**5)
+        self.maxadsHighbound.adjustSize()
+
+        self.deltaHbLowbound.setValue(-50000)
+        self.deltaHaLowbound.setValue(-50000)
+        self.deltaSbLowbound.setValue(-500)
+        self.maxadsLowbound.setValue(0)
+        self.deltaSaLowbound.setValue(-500)
+        self.minadsLowbound.setValue(-1)
+        self.JLowbound.setValue(-1000)
+        self.J1Lowbound.setValue(-1000)
+
+        self.deltaSbHighBound.setValue(100)
+        self.JHighbound.setValue(10000)
+        self.J1Highbound.setValue(10000)
+        self.minadsHighbound.setValue(0)
+        self.deltaSaHighbound.setValue(100)
+        self.deltaHbHighbound.setValue(500)
+        self.deltaHaHighbound.setValue(500)
+        self.maxadsHighbound.setValue(20)
 
         self.boundsLabel = QtWidgets.QLabel(self.centralwidget)
         self.boundsLabel.setGeometry(QtCore.QRect(550, 70, 121, 16))
@@ -307,23 +447,7 @@ class Ui_MainWindow(object):
         self.actionopen.setShortcut(_translate("MainWindow", "Ctrl+O"))
 
 
-        self.Hai = '-5000'
-        self.Hbi = '-5000'
-        self.Sai = '-50'
-        self.Sbi = '-50'
-        self.Ji = '0'
-        self.J1i = '0'
-        self.minadsi = '0'
-        self.maxadsi = '1'
 
-        self.deltaHainit.setPlainText(_translate("MainWindow", self.Hai))
-        self.deltaSaInit.setPlainText(_translate("MainWindow", self.Sai))
-        self.deltaHbinit.setPlainText(_translate("MainWindow", self.Hbi))
-        self.deltaSbInit.setPlainText(_translate("MainWindow", self.Sbi))
-        self.Jinit.setPlainText(_translate("MainWindow", self.Ji))
-        self.J1init.setPlainText(_translate("MainWindow", self.J1i))
-        self.minadsinit.setPlainText(_translate("MainWindow", self.minadsi))
-        self.maxadsinit.setPlainText(_translate("MainWindow", self.maxadsi))
         self.deltaHalabel.setText(_translate("MainWindow", "deltaHa"))
         self.initialvalueslabel.setText(_translate("MainWindow", "Initial Values"))
         self.deltaSalabel.setText(_translate("MainWindow", "deltaSa"))
@@ -336,44 +460,30 @@ class Ui_MainWindow(object):
         self.maxadslabel.setText(_translate("MainWindow", "max. ads."))
 
         self.updateInitialValuesButton.setText(_translate("MainWindow", "Update initial values"))
-        self.deltaHbLowbound.setPlainText(_translate("MainWindow", "-50000"))
-        self.deltaHaLowbound.setPlainText(_translate("MainWindow", "-50000"))
-        self.deltaSbLowbound.setPlainText(_translate("MainWindow", "-500"))
-        self.maxadsLowbound.setPlainText(_translate("MainWindow", "0"))
-        self.deltaSaLowbound.setPlainText(_translate("MainWindow", "-500"))
-        self.minadsLowbound.setPlainText(_translate("MainWindow", "-1"))
-        self.JLowbound.setPlainText(_translate("MainWindow", "-1000"))
-        self.J1Lowbound.setPlainText(_translate("MainWindow", "-1000"))
+
         self.boundsLabel.setText(_translate("MainWindow", "Bounds"))
-        self.deltaSbHighBound.setPlainText(_translate("MainWindow", "100"))
-        self.JHighbound.setPlainText(_translate("MainWindow", "10000"))
-        self.J1Highbound.setPlainText(_translate("MainWindow", "10000"))
-        self.minadsHighbound.setPlainText(_translate("MainWindow", "0"))
-        self.deltaSaHighbound.setPlainText(_translate("MainWindow", "100"))
-        self.deltaHbHighbound.setPlainText(_translate("MainWindow", "500"))
-        self.deltaHaHighbound.setPlainText(_translate("MainWindow", "500"))
-        self.maxadsHighbound.setPlainText(_translate("MainWindow", "20"))
+
 
 
 
     def click_optimise(self):
         print('running optimisation')
-        Halow = float(self.deltaHaLowbound.toPlainText())
-        Hahigh = float(self.deltaHaHighbound.toPlainText())
-        Salow = float(self.deltaSaLowbound.toPlainText())
-        Sahigh = float(self.deltaSaHighbound.toPlainText())
-        Hblow = float(self.deltaHbLowbound.toPlainText())
-        Hbhigh = float(self.deltaHbHighbound.toPlainText())
-        Sblow = float(self.deltaSbLowbound.toPlainText())
-        Sbhigh = float(self.deltaSbHighBound.toPlainText())
-        Jlow = float(self.JLowbound.toPlainText())
-        Jhigh = float(self.JHighbound.toPlainText())
-        J1low = float(self.J1Lowbound.toPlainText())
-        J1high = float(self.J1Highbound.toPlainText())
-        minadslow = float(self.minadsLowbound.toPlainText())
-        minadshigh = float(self.minadsHighbound.toPlainText())
-        maxadslow = float(self.maxadsLowbound.toPlainText())
-        maxadshigh = float(self.maxadsHighbound.toPlainText())
+        Halow = self.deltaHaLowbound.value()
+        Hahigh = self.deltaHaHighbound.value()
+        Salow = self.deltaSaLowbound.value()
+        Sahigh = self.deltaSaHighbound.value()
+        Hblow = self.deltaHbLowbound.value()
+        Hbhigh = self.deltaHbHighbound.value()
+        Sblow = self.deltaSbLowbound.value()
+        Sbhigh = self.deltaSbHighBound.value()
+        Jlow = self.JLowbound.value()
+        Jhigh = self.JHighbound.value()
+        J1low = self.J1Lowbound.value()
+        J1high = self.J1Highbound.value()
+        minadslow = self.minadsLowbound.value()
+        minadshigh = self.minadsHighbound.value()
+        maxadslow = self.maxadsLowbound.value()
+        maxadshigh = self.maxadsHighbound.value()
         self.updateConfig()
         if self.tempUnit.currentText() == '°C':
             temperatureunit = 'C'
@@ -382,17 +492,17 @@ class Ui_MainWindow(object):
         if self.InputType.currentText() == 'Single site':
             ads_profile = adsorptionFitClass.One_site_adsorption_profile()
             try:
-                ads_profile.read_file(file = self.InputFile.toPlainText(),unit = temperatureunit)
+                ads_profile.read_file(file = self.InputFile.text(),unit = temperatureunit)
             except:
                 print('couldn\'t read file')
                 return
-            ads_profile.H = float(self.deltaHainit.toPlainText())
-            ads_profile.S = float(self.deltaSaInit.toPlainText())
-            ads_profile.J = float(self.Jinit.toPlainText())
-            ads_profile.minads = float(self.minadsinit.toPlainText())
-            ads_profile.maxads = float(self.maxadsinit.toPlainText())
-            ads_profile.Hb = float(self.deltaHbinit.toPlainText())
-            ads_profile.Sb = float(self.deltaSbInit.toPlainText())
+            ads_profile.H = self.deltaHainit.value()
+            ads_profile.S = self.deltaSaInit.value()
+            ads_profile.J = self.Jinit.value()
+            ads_profile.minads = self.minadsinit.value()
+            ads_profile.maxads = self.maxadsinit.value()
+            ads_profile.Hb = self.deltaHbinit.value()
+            ads_profile.Sb = self.deltaSbInit.value()
 
             if self.ModelType.currentText() == 'Simple single site':
                 if self.MinMaxRefine.currentText() == 'Off':
@@ -448,26 +558,26 @@ class Ui_MainWindow(object):
             self.outputLabel.setText(output_string)
             self.outputLabel.adjustSize()
 
-            self.Hai =     f"{ads_profile.H :.1f}"
-            self.Sai =     f"{ads_profile.S : .2f}"
-            self.minadsi = f"{ads_profile.minads :.3f}"
-            self.maxadsi = f"{ads_profile.maxads :.3f}"
+            self.Hai =     ads_profile.H 
+            self.Sai =     ads_profile.S 
+            self.minadsi = ads_profile.minads 
+            self.maxadsi = ads_profile.maxads 
         elif self.InputType.currentText() == 'Two sites':
 
             ads_profile = adsorptionFitClass.Two_site_adsorption_profile()
             try:
-                ads_profile.read_file(file = self.InputFile.toPlainText())
+                ads_profile.read_file(file = self.InputFile.text())
             except:
                 print('could\'t read file')
                 return
-            ads_profile.Ha = float(self.deltaHainit.toPlainText())
-            ads_profile.Sa = float(self.deltaSaInit.toPlainText())
-            ads_profile.Hb = float(self.deltaHbinit.toPlainText())
-            ads_profile.Sb = float(self.deltaSbInit.toPlainText())
-            ads_profile.Jab = float(self.Jinit.toPlainText())
-            ads_profile.J1 = float(self.J1init.toPlainText())
-            ads_profile.minads = float(self.minadsinit.toPlainText())
-            ads_profile.maxads = float(self.maxadsinit.toPlainText())
+            ads_profile.Ha = self.deltaHainit.value()
+            ads_profile.Sa = self.deltaSaInit.value()
+            ads_profile.Hb = self.deltaHbinit.value()
+            ads_profile.Sb = self.deltaSbInit.value()
+            ads_profile.Jab = self.Jinit.value()
+            ads_profile.J1 = self.J1init.value()
+            ads_profile.minads = self.minadsinit.value()
+            ads_profile.maxads = self.maxadsinit.value()
             if self.ModelType.currentText() == 'Two sites, intra-pore interaction':
                 if self.MinMaxRefine.currentText() == 'Off':
                     x = np.array([ads_profile.Ha,ads_profile.Hb, ads_profile.Sa,ads_profile.Sb, ads_profile.Jab])
@@ -489,13 +599,13 @@ class Ui_MainWindow(object):
                 self.outputLabel.setText(output_string)
                 self.outputLabel.adjustSize()
 
-                self.Hai =     f"{ads_profile.Ha :.1f}"
-                self.Hbi =     f"{ads_profile.Hb : .1f}"
-                self.Sai =     f"{ads_profile.Sa : .2f}"
-                self.Sbi =     f"{ads_profile.Sb : .2f}"
-                self.Ji =      f"{ads_profile.Jab :.1f}"
-                self.minadsi = f"{ads_profile.minads :.3f}"
-                self.maxadsi = f"{ads_profile.maxads :.3f}"
+                self.Hai =     ads_profile.Ha 
+                self.Hbi =     ads_profile.Hb 
+                self.Sai =     ads_profile.Sa 
+                self.Sbi =     ads_profile.Sb 
+                self.Ji =      ads_profile.Jab
+                self.minadsi = ads_profile.minads 
+                self.maxadsi = ads_profile.maxads 
             elif self.ModelType.currentText() == "Two sites, inter-pore interaction":
                 print('two site inter-pore model can take several minutes')
                 if self.MinMaxRefine.currentText() == 'Off':
@@ -517,35 +627,35 @@ class Ui_MainWindow(object):
                 self.outputLabel.setText(output_string)
                 self.outputLabel.adjustSize()
 
-                self.Hai =     f"{ads_profile.Ha :.1f}"
-                self.Hbi =     f"{ads_profile.Hb : .1f}"
-                self.Sai =     f"{ads_profile.Sa : .2f}"
-                self.Sbi =     f"{ads_profile.Sb : .2f}"
-                self.Ji =      f"{ads_profile.Jab :.1f}"
-                self.J1i =     f"{ads_profile.J1 :.1f}"
-                self.minadsi = f"{ads_profile.minads :.3f}"
-                self.maxadsi = f"{ads_profile.maxads :.3f}"
+                self.Hai =     ads_profile.Ha
+                self.Hbi =     ads_profile.Hb
+                self.Sai =     ads_profile.Sa
+                self.Sbi =     ads_profile.Sb
+                self.Ji =      ads_profile.Jab
+                self.J1i =     ads_profile.J1 
+                self.minadsi = ads_profile.minads 
+                self.maxadsi = ads_profile.maxads 
 
 
 
     def click_update(self):
-        self.deltaHainit.setPlainText(self.Hai)
-        self.deltaSaInit.setPlainText(self.Sai)
-        self.deltaHbinit.setPlainText(self.Hbi)
-        self.deltaSbInit.setPlainText(self.Sbi)
-        self.Jinit.setPlainText(self.Ji)
-        self.J1init.setPlainText(self.J1i)
-        self.minadsinit.setPlainText(self.minadsi)
-        self.maxadsinit.setPlainText(self.maxadsi)
+        self.deltaHainit.setValue(self.Hai)
+        self.deltaSaInit.setValue(self.Sai)
+        self.deltaHbinit.setValue(self.Hbi)
+        self.deltaSbInit.setValue(self.Sbi)
+        self.Jinit.setValue(self.Ji)
+        self.J1init.setValue(self.J1i)
+        self.minadsinit.setValue(self.minadsi)
+        self.maxadsinit.setValue(self.maxadsi)
         self.updateConfig()
     def open_file(self):
 
         #dialog.setFileMode(QtWidgets.QFileDialog.AnyFile)
         filter = "data file (*.txt *.dat *.xy *.xye *csv)"
-        if os.path.dirname(self.InputFile.toPlainText()) == '':
+        if os.path.dirname(self.InputFile.text()) == '':
             direc = os.path.dirname(os.path.realpath(__file__))
         else:
-            direc = os.path.dirname(self.InputFile.toPlainText())
+            direc = os.path.dirname(self.InputFile.text())
         dialog = QtWidgets.QFileDialog.getOpenFileName(caption = 'select data file',
         filter = filter,directory = direc)
         if dialog[0] != '':
@@ -553,31 +663,31 @@ class Ui_MainWindow(object):
         self.updateConfig()
     
     def updateParamDct(self):
-        self.paramDct = {self.deltaHainit: [self.deltaHainit.objectName(),self.deltaHainit.toPlainText()],
-                         self.deltaSaInit: [self.deltaSaInit.objectName(),self.deltaSaInit.toPlainText()],
-                         self.deltaHbinit: [self.deltaHbinit.objectName(), self. deltaHbinit.toPlainText()],
-                         self.deltaSbInit: [self.deltaSbInit.objectName(), self.deltaSbInit.toPlainText()],
-                         self.Jinit: [self.Jinit.objectName(), self.Jinit.toPlainText()],
-                         self.J1init: [self.J1init.objectName(),self.J1init.toPlainText()],
-                         self.minadsinit: [self.minadsinit.objectName(), self.minadsinit.toPlainText()],
-                         self.maxadsinit: [self.maxadsinit.objectName(), self.maxadsinit.toPlainText()],
-                         self.InputFile: [self.InputFile.objectName(),self.InputFile.toPlainText()],
+        self.paramDct = {self.deltaHainit: [self.deltaHainit.objectName(),self.deltaHainit.value()],
+                         self.deltaSaInit: [self.deltaSaInit.objectName(),self.deltaSaInit.value()],
+                         self.deltaHbinit: [self.deltaHbinit.objectName(), self. deltaHbinit.value()],
+                         self.deltaSbInit: [self.deltaSbInit.objectName(), self.deltaSbInit.value()],
+                         self.Jinit: [self.Jinit.objectName(), self.Jinit.value()],
+                         self.J1init: [self.J1init.objectName(),self.J1init.value()],
+                         self.minadsinit: [self.minadsinit.objectName(), self.minadsinit.value()],
+                         self.maxadsinit: [self.maxadsinit.objectName(), self.maxadsinit.value()],
+                         self.InputFile: [self.InputFile.objectName(),self.InputFile.text()],
                          self.InputType: [self.InputType.objectName(), self.InputType.currentIndex()],
                          self.MinMaxRefine: [self.MinMaxRefine.objectName(), self.MinMaxRefine.currentIndex()],
                          self.tempUnit: [self.tempUnit.objectName(), self.tempUnit.currentIndex()],
-                         self.minadsLowbound: [self.minadsLowbound.objectName(),self.minadsLowbound.toPlainText()],
-                         self.minadsHighbound: [self.minadsHighbound.objectName(), self.minadsHighbound.toPlainText()],
-                         self.maxadsLowbound:[self.maxadsLowbound.objectName(), self.maxadsLowbound.toPlainText()],
-                         self.deltaHaLowbound: [self.deltaHaLowbound.objectName(), self.deltaHaLowbound.toPlainText()],
-                         self.deltaHaHighbound: [self.deltaHaHighbound.objectName(), self.deltaHaHighbound.toPlainText()],
-                         self.deltaSaLowbound: [self.deltaSaLowbound.objectName(), self.deltaSaLowbound.toPlainText()],
-                         self.deltaSaHighbound: [self.deltaSaHighbound.objectName(), self.deltaSbHighBound.toPlainText()],
-                         self.deltaHbLowbound: [self.deltaHbLowbound.objectName(), self.deltaHbLowbound.toPlainText()],
-                         self.deltaSbLowbound: [self.deltaSbLowbound.objectName(), self.deltaSbLowbound.toPlainText()],
-                         self.JLowbound: [self.JLowbound.objectName(), self.JLowbound.toPlainText()],
-                         self.JHighbound: [self.JHighbound.objectName(), self.JHighbound.toPlainText()],
-                         self.J1Lowbound: [self.J1Lowbound.objectName(), self.J1Lowbound.toPlainText()],
-                         self.J1Highbound: [self.J1Highbound.objectName(), self.J1Highbound.toPlainText()],
+                         self.minadsLowbound: [self.minadsLowbound.objectName(),self.minadsLowbound.value()],
+                         self.minadsHighbound: [self.minadsHighbound.objectName(), self.minadsHighbound.value()],
+                         self.maxadsLowbound:[self.maxadsLowbound.objectName(), self.maxadsLowbound.value()],
+                         self.deltaHaLowbound: [self.deltaHaLowbound.objectName(), self.deltaHaLowbound.value()],
+                         self.deltaHaHighbound: [self.deltaHaHighbound.objectName(), self.deltaHaHighbound.value()],
+                         self.deltaSaLowbound: [self.deltaSaLowbound.objectName(), self.deltaSaLowbound.value()],
+                         self.deltaSaHighbound: [self.deltaSaHighbound.objectName(), self.deltaSbHighBound.value()],
+                         self.deltaHbLowbound: [self.deltaHbLowbound.objectName(), self.deltaHbLowbound.value()],
+                         self.deltaSbLowbound: [self.deltaSbLowbound.objectName(), self.deltaSbLowbound.value()],
+                         self.JLowbound: [self.JLowbound.objectName(), self.JLowbound.value()],
+                         self.JHighbound: [self.JHighbound.objectName(), self.JHighbound.value()],
+                         self.J1Lowbound: [self.J1Lowbound.objectName(), self.J1Lowbound.value()],
+                         self.J1Highbound: [self.J1Highbound.objectName(), self.J1Highbound.value()],
                          self.ModelType: [self.ModelType.objectName(), self.ModelType.currentIndex()]}
     def updateConfig(self):
         self.updateParamDct()
