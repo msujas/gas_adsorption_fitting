@@ -9,7 +9,7 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import adsorptionFitClass
+from . import adsorptionFitClass
 import numpy as np
 import os
 import sys
@@ -42,7 +42,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("Adsorption profile fit")
         MainWindow.resize(800, 585)
-        self.configFileName = 'parameters.log'
+        self.configFileName = f'{os.path.dirname(__file__)}/parameters.log'
 
         self.fig = None
         self.ax = None
@@ -67,6 +67,7 @@ class Ui_MainWindow(object):
         self.InputFile.setGeometry(QtCore.QRect(20, 30, 471, 25))
         self.InputFile.setObjectName("InputFile")
         self.InputFile.setEnabled(False)
+        self.InputFile.setText( fr"{os.path.dirname(__file__)}/../Ar_occupancy_1bar.txt")
         
         self.inputFileButton = QtWidgets.QPushButton(self.centralwidget)
         self.inputFileButton.setObjectName('inputFileButton')
@@ -79,9 +80,11 @@ class Ui_MainWindow(object):
         self.InputType.setObjectName("InputType")
         self.InputType.addItem("")
         self.InputType.addItem("")
+
         self.InputTypeLabel = QtWidgets.QLabel(self.centralwidget)
         self.InputTypeLabel.setGeometry(QtCore.QRect(230, 100, 101, 31))
         self.InputTypeLabel.setObjectName("InputTypeLabel")
+
         self.MinMaxRefine = QtWidgets.QComboBox(self.centralwidget)
         self.MinMaxRefine.setGeometry(QtCore.QRect(50, 180, 161, 22))
         self.MinMaxRefine.setObjectName("MinMaxRefine")
@@ -431,7 +434,7 @@ class Ui_MainWindow(object):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "Adsorption profile fit"))
         self.inputfileLabel.setText(_translate("MainWindow", "Input File"))
-        self.InputFile.setText(_translate("MainWindow", "Ar_occupancy_1bar.txt"))
+        
 
         self.output_string = ("deltaH = \n"
         "deltaS = \n"
@@ -744,36 +747,27 @@ class Ui_MainWindow(object):
         if dialog[0] != '':
             self.InputFile.setText(dialog[0])
         self.updateConfig()
+
+    def getWidgetValue(self,widget):
+        match type(widget):
+            case QtWidgets.QDoubleSpinBox:
+                return widget.value()
+            case QtWidgets.QLineEdit:
+                return widget.text()
+            case QtWidgets.QComboBox:
+                return widget.currentIndex()
     
     def updateParamDct(self):
+        widgets = [self.deltaHainit,self.deltaSaInit,self.deltaHbinit ,self.deltaSbInit,self.Jinit,self.J1init ,self.minadsinit ,
+                   self.maxadsinit ,self.InputFile,self.InputType ,self.MinMaxRefine    ,self.tempUnit        ,self.minadsLowbound  ,
+                   self.minadsHighbound ,self.maxadsLowbound  ,self.maxadsHighbound ,self.deltaHaLowbound ,self.deltaHaHighbound,
+                   self.deltaSaLowbound ,self.deltaSaHighbound,self.deltaHbLowbound ,self.deltaSbLowbound ,self.JLowbound       ,
+                   self.JHighbound      ,self.J1Lowbound      ,self.J1Highbound     ,self.ModelType ]
+        self.paramDct = {}
+        for w in widgets:
+            value = self.getWidgetValue(w)
+            self.paramDct[w] = [w.objectName(),value]
 
-        self.paramDct = {self.deltaHainit: [self.deltaHainit.objectName(),self.deltaHainit.value()],
-                         self.deltaSaInit: [self.deltaSaInit.objectName(),self.deltaSaInit.value()],
-                         self.deltaHbinit: [self.deltaHbinit.objectName(), self. deltaHbinit.value()],
-                         self.deltaSbInit: [self.deltaSbInit.objectName(), self.deltaSbInit.value()],
-                         self.Jinit: [self.Jinit.objectName(), self.Jinit.value()],
-                         self.J1init: [self.J1init.objectName(),self.J1init.value()],
-                         self.minadsinit: [self.minadsinit.objectName(), self.minadsinit.value()],
-                         self.maxadsinit: [self.maxadsinit.objectName(), self.maxadsinit.value()],
-                         self.InputFile: [self.InputFile.objectName(),self.InputFile.text()],
-                         self.InputType: [self.InputType.objectName(), self.InputType.currentIndex()],
-                         self.MinMaxRefine: [self.MinMaxRefine.objectName(), self.MinMaxRefine.currentIndex()],
-                         self.tempUnit: [self.tempUnit.objectName(), self.tempUnit.currentIndex()],
-                         self.minadsLowbound: [self.minadsLowbound.objectName(),self.minadsLowbound.value()],
-                         self.minadsHighbound: [self.minadsHighbound.objectName(), self.minadsHighbound.value()],
-                         self.maxadsLowbound:[self.maxadsLowbound.objectName(), self.maxadsLowbound.value()],
-                         self.maxadsHighbound:[self.maxadsHighbound.objectName(), self.maxadsHighbound.value()],
-                         self.deltaHaLowbound: [self.deltaHaLowbound.objectName(), self.deltaHaLowbound.value()],
-                         self.deltaHaHighbound: [self.deltaHaHighbound.objectName(), self.deltaHaHighbound.value()],
-                         self.deltaSaLowbound: [self.deltaSaLowbound.objectName(), self.deltaSaLowbound.value()],
-                         self.deltaSaHighbound: [self.deltaSaHighbound.objectName(), self.deltaSbHighBound.value()],
-                         self.deltaHbLowbound: [self.deltaHbLowbound.objectName(), self.deltaHbLowbound.value()],
-                         self.deltaSbLowbound: [self.deltaSbLowbound.objectName(), self.deltaSbLowbound.value()],
-                         self.JLowbound: [self.JLowbound.objectName(), self.JLowbound.value()],
-                         self.JHighbound: [self.JHighbound.objectName(), self.JHighbound.value()],
-                         self.J1Lowbound: [self.J1Lowbound.objectName(), self.J1Lowbound.value()],
-                         self.J1Highbound: [self.J1Highbound.objectName(), self.J1Highbound.value()],
-                         self.ModelType: [self.ModelType.objectName(), self.ModelType.currentIndex()]}
     def updateConfig(self):
         self.updateParamDct()
         string = ''

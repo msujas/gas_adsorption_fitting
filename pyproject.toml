@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools >= 60.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "gasAdsorptionFitting"
+version = "1.0.0"
+requires-python = ">= 3.10"
+dependencies = ["numpy", "scipy","matplotlib"]
+authors = [{name = "Kenneth P. Marshall", email = "kenneth.marshall@esrf.fr"}]
+maintainers = [{name = "Kenneth P. Marshall", email = "kenneth.marshall@esrf.fr"}]
+description = "gui for fitting gas adsorption/absorption data"
+readme = {file = "README.MD", content-type = "text/markdown"}
+keywords = ["gas adsorption"]
+classifiers = [
+"Programming Language :: Python :: 3.13"]
+
+[project.scripts]
+adsFitGui = "gasAdsorptionFitting.adsorptionFitGui:main"
+
+[tool.setuptools]
+packages = ["gasAdsorptionFitting"]
+
+
