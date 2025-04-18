@@ -6,7 +6,7 @@ import matplotlib
 matplotlib.rcParams.update({'font.size': 14})
 
 
-class One_site_adsorption_profile:
+class One_site_adsorption_profile():
     def __init__(self):
         self.T = np.array([])
         self.ads = np.array([])
@@ -19,6 +19,9 @@ class One_site_adsorption_profile:
         self.values = np.array([self.H,self.S,self.J,self.minads,self.maxads])
         self.fit = np.array([])
         self.minmax_refine = False
+        self.fig = None
+        self.ax = None
+        plt.ion()
     def update_values(self):
         self.values = np.array([self.H,self.S,self.J,self.minads,self.maxads])
         self.gamma = (self.ads - self.minads)/(self.maxads-self.minads)
@@ -92,7 +95,10 @@ class One_site_adsorption_profile:
                 return
             elif 'infeasible' in str(e):
                 print(e)
-                print('an initial value is probably outside the boundary condition,\ntry changin bounds')
+                print('an initial value is probably outside the boundary condition,\ntry changing bounds')
+                return
+            else:
+                print(e)
                 return
         self.H = yopt['x'][0]
         self.S = yopt['x'][1]
@@ -262,17 +268,21 @@ rw = {rw}'''
         print('fitted data saved to',fit_filename)
         return yopt
     def adsorption_plot(self):
-        plt.figure(dpi = 150)
-        plt.cla()
-        plt.plot(self.T,self.ads,'o',label = 'adsorption')
-        plt.plot(self.T,self.fit, label = 'fit')
-        plt.xlim(min(self.T),max(self.T))
-        plt.xlabel('Temperature (K)')
-        plt.ylabel('Adsorption')
-        plt.legend()
-        plt.tight_layout()
-        plt.show()
+        if self.fig != None:
+            self.fig.close()
+        self.fig, self.ax = plt.subplots(dpi = 150)
+
+        self.ax.cla()
+        self.ax.plot(self.T,self.ads,'o',label = 'adsorption')
+        self.ax.plot(self.T,self.fit, label = 'fit')
+        self.ax.xlim(min(self.T),max(self.T))
+        self.ax.xlabel('Temperature (K)')
+        self.ax.ylabel('Adsorption')
+        self.ax.legend()
+        self.ax.tight_layout()
+        self.ax.show()
     def vant_hoff_plot(self):
+        plt.close()
         plt.figure(dpi = 150)
         plt.cla()
         plt.plot(1/self.T,np.log(self.Keq),'o',label = 'measured (min. max. normalised)')
@@ -284,6 +294,9 @@ rw = {rw}'''
         plt.tight_layout()
         plt.show()
     def ads_vant_hoff_plot(self):
+        plt.close()
+        if self.fig != None:
+            self.fig.close()
         fig, (ax1,ax2) = plt.subplots(2,1, dpi = 150)
         ax1.cla()
         ax2.cla()
@@ -303,6 +316,7 @@ rw = {rw}'''
         plt.show()
 
     def one_site_coop_plot(self):
+        plt.close()
         plt.figure(dpi =150)
         plt.cla()
         plt.plot(self.T,self.ads,'o',label = 'adsorption')
@@ -313,12 +327,6 @@ rw = {rw}'''
         plt.legend()
         plt.tight_layout()
         plt.show()
-
-
-
-
-
-
 
 
 class Two_site_adsorption_profile:
@@ -468,20 +476,14 @@ class Two_site_adsorption_profile:
         self.update_values()
 
         rw = np.sum(yopt['fun'])**2/np.sum(np.append(self.ads1,self.ads2)**2)
-        string = f'''dHa = {self.Ha}
-dHb = {self.Hb}
-dSa = {self.Sa}
-dSb = {self.Sb}
-Jab = {self.Jab}
-min. ads. = {self.minads}
-max. ads. = {self.maxads}
-rw = {rw}
-'''
-
-
-
-
-
+        string = (f'dHa = {self.Ha}\n'
+                    f'dHb = {self.Hb}\n'
+                    f'dSa = {self.Sa}\n'
+                    f'dSb = {self.Sb}\n'
+                    f'Jab = {self.Jab}\n'
+                    f'min. ads. = {self.minads}\n'
+                    f'max. ads. = {self.maxads}\n'
+                    f'rw = {rw}')
         self.fit1, self.fit2 = self.twosite_nonequiv(*self.values)
         if len(x) == 9:
 
@@ -599,8 +601,10 @@ rw = {rw}
         return yopt
 
     def adsorption_plot(self):
+        plt.close()
         adsav = (self.ads1 + self.ads2)/2
         fitav = (self.fit1 + self.fit2)/2
+        plt.figure(dpi = 150)
         plt.plot(self.T,self.ads1,'o',label = 'adsorption 1')
         plt.plot(self.T,self.ads2,'o', label = 'adsorption 2')
         plt.plot(self.T,adsav,'o', label = 'adsorption av.')
@@ -614,6 +618,7 @@ rw = {rw}
         plt.show()
 
     def adsorption_plot_inter(self):
+        plt.close()
         fig,(ax1,ax2) = plt.subplots(2,1)
         adsav = (self.ads1 + self.ads2)/2
         fitav = (self.fit1 + self.fit2)/2
