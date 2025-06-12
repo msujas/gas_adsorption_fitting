@@ -561,7 +561,7 @@ class Ui_MainWindow(object):
                 f"min. ads. = {self.ads_profile.minads :.3f}\n"
                 f"max. ads = {self.ads_profile.maxads :.3f}")
                 
-                self.Ji = f'{self.ads_profile.J:.1f}'
+                self.Ji = self.ads_profile.J
 
             elif self.ModelType.currentText() == ModelTypes.twoSiteIntra.value:
                 if self.MinMaxRefine.currentText() == 'Off':
@@ -583,9 +583,9 @@ class Ui_MainWindow(object):
                 f"J = {self.ads_profile.J :.1f} (J/mol)\n"
                 f"min. ads. = {self.ads_profile.minads :.3f}\n"
                 f"max. ads = {self.ads_profile.maxads :.3f}")
-                self.Hbi = f"{self.ads_profile.Hb :.1f}"
-                self.Sbi = f'{self.ads_profile.Sb :.2f}'
-                self.Ji = f'{self.ads_profile.J :.1f}'
+                self.Hbi = self.ads_profile.Hb 
+                self.Sbi = self.ads_profile.Sb 
+                self.Ji = self.ads_profile.J 
 
 
             self.outputLabel.setText(self.output_string)
